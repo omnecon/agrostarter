@@ -1,11 +1,11 @@
-<h1>Firestore Notes</h1>
-<p>This is a very basic demo of the Firestore database.</p>
+<h1>AgroStar Postings</h1>
+<p>You can create a new posting here</p>
 
-<input [(ngModel)]="content" placeholder="Add your own note" class="input">
-
+<!--<input [(ngModel)]="content" placeholder="Describe your offer" class="input">-->
+<textarea [(ngModel)]="content" placeholder="Describe your offer" style="overflow:hidden" cols="60" rows="10"></textarea>
 
 <button class="button is-success" (click)="createNote()" [disabled]="content?.length < 2 || content?.length > 200">
-  Add Note
+  Add Posting
 </button>
 <hr>
 <div *ngFor="let note of notes | async">

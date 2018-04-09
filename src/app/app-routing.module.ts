@@ -13,7 +13,7 @@ const routes: Routes = [
   { path: '', component: ReadmePageComponent },
   { path: 'login', component: UserLoginComponent },
   { path: 'items', component: ItemsListComponent, canActivate: [AuthGuard] },
-  { path: 'notes', component: NotesListComponent,  canActivate: [AuthGuard] },
+  { path: 'mypostings', component: NotesListComponent,  canActivate: [AuthGuard] },
   // uploads are lazy loaded
   { path: 'uploads', loadChildren: './uploads/shared/upload.module#UploadModule', canActivate: [AuthGuard] },
 ];
