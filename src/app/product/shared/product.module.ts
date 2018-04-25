@@ -1,0 +1,31 @@
+import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MaterialModule } from '../../material/material.module';
+import { AngularFireDatabaseModule } from 'angularfire2/database';
+
+import { SharedModule } from '../../shared/shared.module';
+
+import { ProductService } from './product.service';
+
+import { ProductPageComponent } from '../product-page.component';
+
+@NgModule({
+   imports: [
+      CommonModule,
+      SharedModule,
+      ReactiveFormsModule,
+      FormsModule,
+      AngularFireDatabaseModule,
+      BrowserAnimationsModule,
+      MaterialModule,
+   ],
+   declarations: [
+      ProductPageComponent,
+   ],
+   providers: [
+      ProductService,
+   ],
+})
+export class ProductModule { }

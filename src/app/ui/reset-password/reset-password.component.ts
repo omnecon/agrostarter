@@ -1,21 +1,19 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { ReactiveFormsModule, FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { AuthService } from '../../core/auth.service';
-
-import { DbService } from '../../core/db.service';
-type UserProfileFields = 'email' | 'gender';
-type FormProfileErrors = { [u in UserProfileFields]: string };
-
+import * as firebase from 'firebase/app';
+type UserFields = 'email';
+type FormErrors = { [u in UserFields]: string };
 @Component({
-   selector: 'user-profile',
-   templateUrl: './user-profile.component.html',
-   styleUrls: ['./user-profile.component.scss'],
+   selector: 'reset-password',
+   templateUrl: './reset-password.component.html',
+   styleUrls: ['./reset-password.component.scss'],
 })
-export class UserProfileComponent implements OnInit {
-   userProfileForm: FormGroup;
-   formErrors: FormProfileErrors = {
+export class ResetPassComponent implements OnInit {
+   resetPassForm: FormGroup;
+   formErrors: FormErrors = {
       'email': '',
-      'gender': '',
    };
    validationMessages = {
       'email': {
@@ -23,28 +21,38 @@ export class UserProfileComponent implements OnInit {
          'email': 'Email must be a valid email',
       },
    };
-   constructor(public auth: AuthService, public db: DbService, private fb: FormBuilder) { }
+
+   constructor(public auth: AuthService, private router: Router, private fb: FormBuilder) {
+
+   }
    ngOnInit() {
       this.buildForm();
    }
+
+   resetPassword() {
+      this.auth.resetPassword(this.resetPassForm.value['email'])
+         .then(() => {
+            console.log('Check your email to reset your password');
+            this.router.navigate(['/login']);
+         });
+   }
+
    buildForm() {
-      // Login Forms
-      this.userProfileForm = this.fb.group({
+      this.resetPassForm = this.fb.group({
          'email': ['', [
             Validators.required,
             Validators.email,
          ]],
-         'gender': [true],
       });
 
-      this.userProfileForm.valueChanges.subscribe((data) => this.onValueChanged(data));
-
+      this.resetPassForm.valueChanges.subscribe((data) => this.onValueChanged(data));
       this.onValueChanged(); // reset validation messages
    }
-   onValueChanged(data?: any) {
 
-      if (!this.userProfileForm) { return; }
-      const form = this.userProfileForm;
+   // Updates validation state on form changes.
+   onValueChanged(data?: any) {
+      if (!this.resetPassForm) { return; }
+      const form = this.resetPassForm;
       for (const field in this.formErrors) {
          // tslint:disable-next-line:max-line-length
          if (Object.prototype.hasOwnProperty.call(this.formErrors, field) && (field === 'email')) {
@@ -63,11 +71,6 @@ export class UserProfileComponent implements OnInit {
             }
          }
       }
-
    }
-   updateProfile() {
-      // Get a reference to the database service
-      // this.db.writeUserData('Poonam', 'Pardeshi');
 
-   }
 }
