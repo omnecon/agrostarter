@@ -7,18 +7,19 @@
                <label for="email">Email</label>
                <input matInput type="email" id="email" formControlName="email" required>
             </mat-form-field>
-            <div *ngIf="formErrors.email" class="notification is-danger">
+            <div *ngIf="formErrors.email" class="help is-danger">
                {{ formErrors.email }}
             </div>
             <mat-form-field class="input-full-width">
                <label for="password">Password</label>
                <input matInput type="password" id="password" formControlName="password" required>
             </mat-form-field>
-            <div *ngIf="formErrors.password" class="notification is-danger">
+            <div *ngIf="formErrors.password" class="help is-danger">
                {{ formErrors.password }}
             </div>
             <br>
             <a class="help is-info" (click)="resetPassword()" style="float: right;text-align: right;">Forget Password?</a>
+            <br>
             <br>
             <div *ngIf="userForm.valid" class="notification is-success">Form Looks valid</div>
             <div *ngIf="passReset" class="notification is-info">Reset requested. Check your email instructions.</div>
@@ -26,10 +27,10 @@
          </form>
          <hr>
          <div class="social-btn-row">
-            <button (click)="signInWithGoogle()" class="button btn-social btn-google btn-block">
+            <button (click)="signInWithGoogle()" class="btn btn-social btn-google btn-block">
                <i class="fa fa-google fa-lg"></i> Login with Google
             </button>
-            <button (click)="signInWithFacebook()" class="button btn-block btn-social btn-facebook">
+            <button (click)="signInWithFacebook()" class="btn btn-block btn-social btn-facebook">
                <i class="fa fa-facebook fa-lg"></i> Login with Facebook
             </button>
          </div>
@@ -47,31 +48,31 @@
             <label for="email">Email</label>
             <input matInput type="email" id="email" formControlName="email" required>
          </mat-form-field>
-         <div *ngIf="formRegErrors.email" class="notification is-danger">
+         <div *ngIf="formRegErrors.email" class="help is-danger">
             {{ formRegErrors.email }}
          </div>
          <mat-form-field class="input-full-width">
             <label for="password">Password</label>
             <input matInput type="password" id="password" formControlName="password" required>
          </mat-form-field>
-         <div *ngIf="formRegErrors.password" class="notification is-danger">
+         <div *ngIf="formRegErrors.password" class="help is-danger">
             {{ formRegErrors.password }}
          </div>
          <mat-checkbox formControlName="terms" required style="text-align: center">I accept the terms of this page</mat-checkbox>
-         <br>
-         <br>
-         <div *ngIf="formRegErrors.terms" class="notification is-danger">
+         <div *ngIf="formRegErrors.terms" class="help is-danger">
             {{ formRegErrors.terms }}
          </div>
+         <br>
+         <br>
          <div *ngIf="userRegistrationForm.valid" class="notification is-success">Form is valid</div>
-         <button mat-raised-button color="accent" type="submit" class="button" [disabled]="!userRegistrationForm.valid">Submit</button>
+         <button mat-raised-button color="accent" type="submit" class="btn btn-block btn-lg" [disabled]="!userRegistrationForm.valid">Submit</button>
       </form>
       <hr>
       <div class="social-btn-row">
-         <button (click)="signInWithGoogle()" class="button btn-social btn-google">
+         <button (click)="signInWithGoogle()" class="btn btn-block btn-social btn-google ">
             <i class="fa fa-google fa-lg"></i> Register with Google
          </button>
-         <button (click)="signInWithFacebook()" class="button  btn-social btn-facebook">
+         <button (click)="signInWithFacebook()" class="btn btn-block btn-social btn-facebook">
             <i class="fa fa-facebook fa-lg"></i> Register with Facebook
          </button>
       </div>

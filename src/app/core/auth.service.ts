@@ -107,8 +107,6 @@ export class AuthService {
          .catch((error) => this.handleError(error));
    }
 
-
-
    signOut() {
       this.afAuth.auth.signOut().then(() => {
          this.router.navigate(['/login']);
@@ -122,25 +120,32 @@ export class AuthService {
    }
 
    // Sets user data to firestore after succesful login
-   updateUserData(user: User) {
+   updateUserData(user: User, newUser?: boolean) {
       console.log('user.uid   ===== ', user.uid);
       const userRef: AngularFirestoreDocument<User> = this.afs.doc(`users/${user.uid}`);
+      // const timestamp = firebase.firestore.FieldValue.serverTimestamp();
       const data: User = {
          uid: user.uid,
          email: user.email || null,
          photoURL: user.photoURL || 'https://goo.gl/Fz9nrQ',
          postCode: '',
          lastName: '',
-         dateOfBirth: '',
+         dataOfBirth: '',
          firstName: '',
          streetNameNumber: '',
          city: '',
          isNewsletterEnabled: true,
          country: '',
          isMale: true,
-         isNotifictionsEnalbe: true,
+         isNotifictionsEnabled: true,
          phone: '',
+         agbAcceptedDate: '',
+         isAgbAccepted: true,
       };
+      if (newUser) {
+         data.agbAcceptedDate = new Date();
+      }
+      window.localStorage.setItem('user', JSON.stringify(data));
       return userRef.set(data);
    }
 }

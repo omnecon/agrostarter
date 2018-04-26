@@ -6,7 +6,7 @@
 <!-- User logged in -->
 <!-- <ng-template #authenticated>
    <div *ngIf="auth.user | async as user">
-      <h3>Howdy, {{ user.displayName }}</h3>
+      <h5>Howdy, {{ user.displayName }}</h5>
       <img class="card-img-top" [src]="user.photoURL || 'https://api.adorable.io/avatars/109/fire.png'" width=50px>
       <br>
       <p class="text-truncate">UID: {{ user.uid }}</p>
@@ -15,41 +15,83 @@
 </ng-template> -->
 <!-- User NOT logged in -->
 <!-- <ng-template #guest class="box">
-   <h3>Howdy, GUEST</h3>
+   <h5>Howdy, GUEST</h5>
    <p class="card-text">Login to get started...</p>
    <button class="button" routerLink="/login">Login</button>
 </ng-template> -->
-<div id="wrapper">
+<div class="container">
+   <div *ngIf="userProfile | async as user">
+      {{ user.email }}
+   </div>
+   <br>
    <form [formGroup]="userProfileForm" (ngSubmit)="updateProfile()">
-      <div class="content columns">
-         <main class="column is-12">
-            <h3>Personal Infornmation</h3>
-         </main>
+      <div class="row">
+         <div class="col-12">
+            <h5>Personal Infornmation</h5>
+         </div>
       </div>
-      <div class="content columns">
-         <main class="column is-6">
-            photo
-         </main>
-         <main class="column is-6">
-            <mat-radio-group formControlName="gender">
-               <mat-radio-button>Male</mat-radio-button>
-               <mat-radio-button>Female</mat-radio-button>
+      <div class="row">
+         <div class="col-sm">
+            <div class="img-box">
+               <img *ngIf="showNoImg" [src]="'assets/profile/profile-icon-images-29.jpg'" />
+               <img *ngIf="!showNoImg" [src]="imagem | decode64" />
+            </div>
+            <div class="custom-file-upload">
+               <span class="btn btn-default btn-file">
+                  Upload Image
+                  <input type="file" class="upload" accept="image/*" (change)="uploadFile($event,imagem)">
+               </span>
+            </div>
+         </div>
+         <div class="col-sm">
+            <mat-radio-group formControlName="isMale">
+               <mat-radio-button value='yes'>Male</mat-radio-button> &nbsp;&nbsp;
+               <mat-radio-button value='no'>Female</mat-radio-button>
             </mat-radio-group>
-         </main>
+            <mat-form-field class="input-full-width">
+               <label for="firstName">First Name</label>
+               <input matInput type="text" id="firstName" formControlName="firstName">
+            </mat-form-field>
+            <mat-form-field class="input-full-width">
+               <label for="lastName">Last Name</label>
+               <input matInput type="text" id="lastName" formControlName="lastName">
+            </mat-form-field>
+            <mat-form-field class="input-full-width">
+               <label for="dataOfBirth">Date of Birth</label>
+               <input matInput [matDatepicker]="picker" id="dataOfBirth" formControlName="dataOfBirth">
+               <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+               <mat-datepicker #picker startView="year" [startAt]="startDate"></mat-datepicker>
+            </mat-form-field>
+         </div>
       </div>
-      <div class="content columns">
-         <main class="column is-6">
-            <h3>Address</h3>
-         </main>
-         <main class="column is-6">
-            <h3>Contact Details</h3>
-         </main>
+      <div class="row">
+         <div class="col-sm">
+            <h5>Address</h5>
+         </div>
+         <div class="col-sm">
+            <h5>Contact Details</h5>
+         </div>
       </div>
-      <div class="content columns">
-         <main class="column is-6">
-            <!-- photo -->
-         </main>
-         <main class="column is-6">
+      <div class="row">
+         <div class="col-sm">
+            <mat-form-field class="input-full-width">
+               <label for="streetNameNumber">Street Name and Number</label>
+               <input matInput type="text" id="streetNameNumber" formControlName="streetNameNumber">
+            </mat-form-field>
+            <mat-form-field class="input-full-width">
+               <label for="postCode">Post Code</label>
+               <input matInput type="text" id="postCode" formControlName="postCode">
+            </mat-form-field>
+            <mat-form-field class="input-full-width">
+               <label for="city">City</label>
+               <input matInput type="text" id="city" formControlName="city">
+            </mat-form-field>
+            <mat-form-field class="input-full-width">
+               <label for="country">Country</label>
+               <input matInput type="text" id="country" formControlName="country">
+            </mat-form-field>
+         </div>
+         <div class="col-sm">
             <mat-form-field class="input-full-width">
                <label for="email">Email</label>
                <input matInput type="email" id="email" formControlName="email" required>
@@ -57,15 +99,22 @@
             <div *ngIf="formErrors.email" class="help is-danger">
                {{ formErrors.email }}
             </div>
-         </main>
-      </div>
-      <div class="content columns">
-         <main class="column is-12">
+            <mat-form-field class="input-full-width">
+               <label for="phone">Telephone Number</label>
+               <input matInput type="text" id="phone" formControlName="phone">
+            </mat-form-field>
+            <div *ngIf="formErrors.phone" class="help is-danger">
+               {{ formErrors.phone }}
+            </div>
             <br>
-            <div *ngIf="userProfileForm.valid" class="notification is-success">Form Looks valid</div>
+            <mat-checkbox formControlName="isNewsletterEnabled">Newsletter</mat-checkbox>
             <br>
-            <button mat-raised-button color="accent" type="submit" [disabled]="!userProfileForm.valid" class="btn btn-block btn-lg">Submit</button>
-         </main>
+            <br>
+            <mat-checkbox formControlName="isNotifictionsEnabled">Notifications</mat-checkbox>
+            <br>
+            <br>
+            <button mat-raised-button color="accent" type="submit" class="btn btn-block btn-lg">Submit</button>
+         </div>
       </div>
    </form>
 </div>

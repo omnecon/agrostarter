@@ -5,14 +5,15 @@ export interface User {
    displayName?: string;
    postCode?: string;
    lastName?: string;
-   dateOfBirth?: string;
+   dataOfBirth?: string;
    firstName?: string;
    streetNameNumber?: string;
    city?: string;
    isNewsletterEnabled: boolean;
    country?: string;
    isMale: boolean;
-   isNotifictionsEnalbe: boolean;
+   isNotifictionsEnabled: boolean;
    phone?: string;
+   agbAcceptedDate?: any;
+   isAgbAccepted?: boolean;
 }
-

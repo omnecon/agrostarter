@@ -21,7 +21,7 @@ export class AccountActivationComponent implements OnInit {
          const email = params['email'];
          console.log('email **********', email);
          if ((email !== undefined) && (email === finalUser.email)) {
-            this.auth.updateUserData(finalUser);
+            this.auth.updateUserData(finalUser, true);
          } else {
             this.router.navigate(['/login']);
          }

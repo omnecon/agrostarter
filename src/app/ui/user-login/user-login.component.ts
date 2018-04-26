@@ -42,7 +42,7 @@ export class UserLoginComponent implements OnInit {
          'maxlength': 'Password cannot be more than 40 characters long.',
       },
       'terms': {
-         'required': 'Please accept the trams.',
+         'required': 'Please accept the terms.',
       },
    };
    tabIndex = 0;

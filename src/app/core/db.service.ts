@@ -13,27 +13,30 @@ export class DbService {
 
    }
 
-   writeUserData(fName: string, lName: string) {
+   writeUserData(updateUser: User) {
       const user: any = firebase.auth().currentUser;
       console.log('user.uid   ===== ', user.uid);
       const userRef: AngularFirestoreDocument<User> = this.afs.doc(`users/${user.uid}`);
       const data: User = {
          uid: user.uid,
          email: user.email || null,
-         photoURL: user.photoURL || 'https://goo.gl/Fz9nrQ',
-         displayName: user.displayName || (`${fName} ${lName}`),
-         postCode: '',
-         lastName: lName,
-         dateOfBirth: '',
-         firstName: fName,
-         streetNameNumber: '',
-         city: '',
-         isNewsletterEnabled: true,
-         country: '',
-         isMale: true,
-         isNotifictionsEnalbe: true,
-         phone: '',
+         photoURL: updateUser.photoURL || 'https://goo.gl/Fz9nrQ',
+         displayName: (`${updateUser.firstName} ${updateUser.lastName}`) || user.displayName,
+         postCode: updateUser.postCode || user.postCode,
+         lastName: updateUser.lastName || user.lastName,
+         dataOfBirth: updateUser.dataOfBirth || user.dataOfBirth,
+         firstName: updateUser.firstName || user.firstName,
+         streetNameNumber: updateUser.streetNameNumber || user.streetNameNumber,
+         city: updateUser.city || user.city,
+         isNewsletterEnabled: updateUser.isNewsletterEnabled || user.isNewsletterEnabled,
+         country: updateUser.country || user.country,
+         isMale: updateUser.isMale || user.isMale,
+         isNotifictionsEnabled: updateUser.isNewsletterEnabled || user.isNotifictionsEnabled,
+         phone: updateUser.phone || user.phone,
       };
-      return userRef.set(data);
+      return userRef.set(data).then((updateProfile: any) => {
+         console.log('updateProfile ====>', updateProfile);
+      });
    }
+
 }

@@ -18,7 +18,7 @@ import { ReadmePageComponent } from '../readme-page/readme-page.component';
 import { ResetPassComponent } from '../reset-password/reset-password.component';
 import { AccountActivationComponent } from '../account-activation/account-activation.component';
 import { NotificationMessageComponent } from '../notification-message/notification-message.component';
-
+import { Decode64Pipe } from '../../pipes/decode64pipe';
 @NgModule({
    imports: [
       CommonModule,
@@ -28,6 +28,7 @@ import { NotificationMessageComponent } from '../notification-message/notificati
       RouterModule,
       BrowserAnimationsModule,
       MaterialModule,
+
    ],
    declarations: [
       UserLoginComponent,
@@ -38,6 +39,7 @@ import { NotificationMessageComponent } from '../notification-message/notificati
       NotificationMessageComponent,
       ResetPassComponent,
       AccountActivationComponent,
+      Decode64Pipe,
    ],
    exports: [
       TopNavComponent,
