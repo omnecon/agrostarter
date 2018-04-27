@@ -40,13 +40,14 @@ export class UserProfileComponent implements OnInit {
    pic: any;
    imagem = '';
    showNoImg = true;
+   accessToken: any;
    // tslint:disable-next-line:max-line-length
    constructor(public auth: AuthService, public db: DbService, private fb: FormBuilder, private afs: AngularFirestore, private sanitizer: DomSanitizer) {
       this.startDate = new Date(1990, 0, 1);
       const newUser: any = window.localStorage.getItem('user');
       const finalUser = JSON.parse(newUser);
       this.uid = finalUser.uid;
-
+      // this.accessToken = finalUser.accessToken;
       this.userProfileForm = this.fb.group({
          'email': ['', [
             Validators.required,
@@ -68,7 +69,6 @@ export class UserProfileComponent implements OnInit {
    ngOnInit() {
       this.userDoc = this.afs.doc<User>(`users/${this.uid}`);
       this.userDoc.valueChanges().subscribe((data) => {
-         console.log('Data', data);
          this.user = data;
          this.buildForm(this.user);
       });
@@ -82,25 +82,26 @@ export class UserProfileComponent implements OnInit {
       } else {
          isMale = 'no';
       }
-      console.log('ismale == ', isMale);
+
       this.userProfileForm = this.fb.group({
          'email': [user.email, [
             Validators.required,
             Validators.email,
          ]],
          'isMale': [isMale],
-         'isNewsletterEnabled': [user.isNewsletterEnabled || true],
-         'isNotifictionsEnabled': [user.isNotifictionsEnabled || true],
-         'phone': [user.phone || '', Validators.pattern('^[0-9]{10}$')],
-         'streetNameNumber': [user.streetNameNumber || ''],
-         'postCode': [user.postCode || ''],
-         'city': [user.city || ''],
-         'country': [user.country || ''],
-         'firstName': [user.firstName || ''],
-         'lastName': [user.lastName || ''],
+         'isNewsletterEnabled': [user.isNewsletterEnabled],
+         'isNotifictionsEnabled': [user.isNotifictionsEnabled],
+         'phone': [user.phone, Validators.pattern('^[0-9]{10}$')],
+         'streetNameNumber': [user.streetNameNumber],
+         'postCode': [user.postCode],
+         'city': [user.city],
+         'country': [user.country],
+         'firstName': [user.firstName],
+         'lastName': [user.lastName],
          'dataOfBirth': [user.dataOfBirth],
       });
       this.imagem = user.photoURL;
+      this.accessToken = user.accessToken;
       this.showNoImg = false;
       this.userProfileForm.valueChanges.subscribe((data) => this.onValueChanged(data));
 
@@ -132,9 +133,7 @@ export class UserProfileComponent implements OnInit {
    }
    updateProfile() {
       // Get a reference to the database service
-
       if (this.userProfileForm.valid) {
-         console.log('this.userProfileForm.value == ', this.userProfileForm.value);
          const data: User = {
             email: this.userProfileForm.value.email,
             photoURL: this.imagem,
@@ -144,12 +143,14 @@ export class UserProfileComponent implements OnInit {
             firstName: this.userProfileForm.value.firstName,
             streetNameNumber: this.userProfileForm.value.streetNameNumber,
             city: this.userProfileForm.value.city,
-            isNewsletterEnabled: this.userProfileForm.value.isNewsletterEnabled || true,
+            isNewsletterEnabled: this.userProfileForm.value.isNewsletterEnabled,
             country: this.userProfileForm.value.country,
             isMale: (this.userProfileForm.value.isMale === 'yes') ? true : false,
-            isNotifictionsEnabled: this.userProfileForm.value.isNotifictionsEnabled || true,
+            isNotifictionsEnabled: this.userProfileForm.value.isNotifictionsEnabled,
             phone: this.userProfileForm.value.phone,
             uid: this.uid,
+            accessToken: this.accessToken,
+            terms: true,
          };
          // this.db.writeUserData(data);
          this.userDoc.update(data);
@@ -158,20 +159,15 @@ export class UserProfileComponent implements OnInit {
 
    uploadFile(event: any, midia: any) {
       const file = event.target.files[0];
-      console.log('file == ', file);
       const reader = new FileReader();
       reader.readAsDataURL(file);
       reader.onload = () => {
-         console.log('base64 do archive', reader.result);
          this.pic = reader.result;
          this.imagem = btoa(reader.result);
          this.showNoImg = false;
-         console.log('base64 do archive encoded', this.imagem);
       };
       reader.onerror = (error) => {
          console.log('Erro ao ler a imagem : ', error);
       };
-
-      // console.log('this.pic ', this.pic);
    }
 }

@@ -32,7 +32,6 @@ export class ResetPassComponent implements OnInit {
    resetPassword() {
       this.auth.resetPassword(this.resetPassForm.value['email'])
          .then(() => {
-            console.log('Check your email to reset your password');
             this.router.navigate(['/login']);
          });
    }

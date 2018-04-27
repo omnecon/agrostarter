@@ -15,7 +15,6 @@ export class DbService {
 
    writeUserData(updateUser: User) {
       const user: any = firebase.auth().currentUser;
-      console.log('user.uid   ===== ', user.uid);
       const userRef: AngularFirestoreDocument<User> = this.afs.doc(`users/${user.uid}`);
       const data: User = {
          uid: user.uid,
@@ -33,6 +32,8 @@ export class DbService {
          isMale: updateUser.isMale || user.isMale,
          isNotifictionsEnabled: updateUser.isNewsletterEnabled || user.isNotifictionsEnabled,
          phone: updateUser.phone || user.phone,
+         accessToken: user.accessToken,
+         terms: true,
       };
       return userRef.set(data).then((updateProfile: any) => {
          console.log('updateProfile ====>', updateProfile);

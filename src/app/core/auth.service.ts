@@ -15,7 +15,8 @@ import { User } from '../models';
 export class AuthService {
 
    user: Observable<User | null>;
-
+   private userDoc: AngularFirestoreDocument<User>;
+   accessToken = '';
    constructor(private afAuth: AngularFireAuth,
       private afs: AngularFirestore,
       private router: Router,
@@ -35,54 +36,79 @@ export class AuthService {
 
    googleLogin() {
       const provider = new firebase.auth.GoogleAuthProvider();
-      return this.oAuthLogin(provider);
-   }
-
-   githubLogin() {
-      const provider = new firebase.auth.GithubAuthProvider();
+      provider.addScope('https://www.googleapis.com/auth/user.birthday.read');
+      provider.addScope('https://www.googleapis.com/auth/user.emails.read');
+      provider.addScope('https://www.googleapis.com/auth/user.phonenumbers.read');
+      provider.addScope('https://www.googleapis.com/auth/userinfo.profile');
       return this.oAuthLogin(provider);
    }
 
    facebookLogin() {
       const provider = new firebase.auth.FacebookAuthProvider();
-      return this.oAuthLogin(provider);
-   }
-
-   twitterLogin() {
-      const provider = new firebase.auth.TwitterAuthProvider();
+      provider.addScope('user_birthday');
+      provider.addScope('email');
       return this.oAuthLogin(provider);
    }
 
    private oAuthLogin(provider: firebase.auth.AuthProvider) {
       return this.afAuth.auth.signInWithPopup(provider)
-         .then((credential) => {
-            this.notify.update('Welcome to Agrostarter!!!', 'success');
-            return this.updateUserData(credential.user);
+         .then((result) => {
+            // The signed-in user info.
+            const user = result.user;
+            // This gives you a Facebook Access Token. You can use it to access the Facebook API.
+            this.accessToken = result.credential.accessToken;
+            const additionalUserInfo = result.additionalUserInfo.profile;
+            const providerId = result.additionalUserInfo.providerId;
+            this.afs.collection('users')
+               .doc(user.uid)
+               .ref
+               .get().then((doc) => {
+                  if (doc.exists) {
+                     console.log('Document exist data:', doc.data());
+                     const data = {
+                        uid: user.uid,
+                     };
+                     this.notify.update('Welcome to Agrostarter!!!', 'success');
+                     this.updateUserData(data);
+                  } else {
+                     console.log('No such document!', providerId);
+                     if (providerId === 'facebook.com') {
+                        const data = {
+                           uid: user.uid,
+                           email: user.email || null,
+                           photoURL: user.photoURL || 'https://goo.gl/Fz9nrQ',
+                           firstName: additionalUserInfo.first_name,
+                           lastName: additionalUserInfo.last_name,
+                           isMale: (additionalUserInfo.gender === 'male') ? true : false,
+                           dataOfBirth: additionalUserInfo.birthday,
+                        };
+                        this.notify.update('Welcome to Agrostarter!!!', 'success');
+                        this.setUserData(data, true);
+                     } else {
+                        const data = {
+                           uid: user.uid,
+                           email: user.email || null,
+                           photoURL: additionalUserInfo.picture,
+                           firstName: additionalUserInfo.given_name,
+                           lastName: additionalUserInfo.family_name,
+                           isMale: (additionalUserInfo.gender === 'male') ? true : false,
+                        };
+                        this.notify.update('Welcome to Agrostarter!!!', 'success');
+                        this.setUserData(data, true);
+                     }
+                  }
+               }).catch((error) => {
+                  console.log('Error getting document:', error);
+               });
          })
          .catch((error) => this.handleError(error));
    }
 
-   //// Anonymous Auth ////
-
-   anonymousLogin() {
-      return this.afAuth.auth.signInAnonymously()
-         .then((user) => {
-            this.notify.update('Welcome to Agrostarter!!!', 'success');
-            return this.updateUserData(user); // if using firestore
-         })
-         .catch((error) => {
-            console.error(error.code);
-            console.error(error.message);
-            this.handleError(error);
-         });
-   }
-
    //// Email/Password Auth ////
-
    emailSignUp(email: string, password: string) {
       return this.afAuth.auth.createUserWithEmailAndPassword(email, password)
-         .then((user) => {
-            // return this.updateUserData(user); // if using firestore
+         .then((user: User) => {
+            user.terms = true;
             window.localStorage.setItem('user', JSON.stringify(user));
             return user;
          })
@@ -92,8 +118,8 @@ export class AuthService {
    emailLogin(email: string, password: string) {
       return this.afAuth.auth.signInWithEmailAndPassword(email, password)
          .then((user) => {
-            this.notify.update('Welcome to Agrostarter!!!', 'success')
-            return this.updateUserData(user); // if using firestore
+            this.notify.update('Welcome to Agrostarter!!!', 'success');
+            this.updateUserData(user); // if using firestore
          })
          .catch((error) => this.handleError(error));
    }
@@ -120,27 +146,35 @@ export class AuthService {
    }
 
    // Sets user data to firestore after succesful login
-   updateUserData(user: User, newUser?: boolean) {
-      console.log('user.uid   ===== ', user.uid);
+   updateUserData(user: any) {
+      const userRef: AngularFirestoreDocument<any> = this.afs.doc(`users/${user.uid}`);
+      const data = {
+         uid: user.uid,
+      };
+      return userRef.set(data, { merge: true });
+   }
+   // Sets user data to firestore after succesful sigin
+   setUserData(user: any, newUser?: boolean) {
       const userRef: AngularFirestoreDocument<User> = this.afs.doc(`users/${user.uid}`);
-      // const timestamp = firebase.firestore.FieldValue.serverTimestamp();
       const data: User = {
          uid: user.uid,
          email: user.email || null,
          photoURL: user.photoURL || 'https://goo.gl/Fz9nrQ',
          postCode: '',
-         lastName: '',
-         dataOfBirth: '',
-         firstName: '',
+         lastName: user.lastName || '',
+         dataOfBirth: user.dataOfBirth || '',
+         firstName: user.firstName || '',
          streetNameNumber: '',
          city: '',
          isNewsletterEnabled: true,
          country: '',
-         isMale: true,
+         isMale: user.isMale || true,
          isNotifictionsEnabled: true,
          phone: '',
          agbAcceptedDate: '',
          isAgbAccepted: true,
+         accessToken: this.accessToken,
+         terms: true,
       };
       if (newUser) {
          data.agbAcceptedDate = new Date();

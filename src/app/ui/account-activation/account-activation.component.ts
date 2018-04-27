@@ -14,14 +14,11 @@ export class AccountActivationComponent implements OnInit {
    }
    setUser() {
       const newUser: any = window.localStorage.getItem('user');
-      console.log('user **********', JSON.parse(newUser));
       const finalUser = JSON.parse(newUser);
-      console.log(finalUser.uid);
       this.route.queryParams.subscribe((params) => {
          const email = params['email'];
-         console.log('email **********', email);
          if ((email !== undefined) && (email === finalUser.email)) {
-            this.auth.updateUserData(finalUser, true);
+            this.auth.setUserData(finalUser, true);
          } else {
             this.router.navigate(['/login']);
          }

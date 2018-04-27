@@ -46,8 +46,7 @@ export class UserLoginComponent implements OnInit {
       },
    };
    tabIndex = 0;
-   constructor(public auth: AuthService, private router: Router, private fb: FormBuilder, private notify: NotifyService) {
-      console.log('router.url == ', router.url);
+   constructor(public auth: AuthService, private router: Router, private fb: FormBuilder, public notify: NotifyService) {
       if (router.url === '/register') {
          this.tabIndex = 1;
       } else if (router.url === '/login') {
@@ -93,18 +92,18 @@ export class UserLoginComponent implements OnInit {
    }
    login() {
       this.auth.emailLogin(this.userForm.value['email'], this.userForm.value['password']).then((data) => {
-         console.log('login data ==> ', data);
          this.afterSignIn();
       });
    }
+
    signup() {
-      console.log(this.userRegistrationForm.value['email']);
       // tslint:disable-next-line:max-line-length
-      this.auth.emailSignUp(this.userRegistrationForm.value['email'], this.userRegistrationForm.value['password']).then((data) => {
-         console.log('signup data ==> ', data);
+      this.auth.emailSignUp(this.userRegistrationForm.value['email'], this.userRegistrationForm.value['password']).then(() => {
          // this.auth.updateUserData(user)
          this.sendNewEmailVerification();
          // this.afterSignIn();
+      }).catch((error) => {
+         // console.log('error == ', error);
       });
    }
 
@@ -112,7 +111,8 @@ export class UserLoginComponent implements OnInit {
    sendNewEmailVerification() {
       const user: any = firebase.auth().currentUser;
       // this.auth.updateUserData(user)
-      const email = user.email.toString().trim();
+      const email = this.userRegistrationForm.value['email'].toString().trim();
+
       this.actionCodeSettings.url = `http://localhost:4200/account-activation/?email=${email}`;
       user.sendEmailVerification(this.actionCodeSettings)
          .then(() => this.notify.update('Please verify your email', 'info'));
@@ -162,7 +162,7 @@ export class UserLoginComponent implements OnInit {
                   if (control.errors) {
                      for (const key in control.errors) {
                         if (Object.prototype.hasOwnProperty.call(control.errors, key)) {
-                           this.formRegErrors[field] += `${(messages as { [key: string]: string })[key]} `;
+                           this.formRegErrors[field] += `${(messages as { [key: string]: string })[key]}`;
                         }
                      }
                   }
@@ -173,24 +173,21 @@ export class UserLoginComponent implements OnInit {
    }
 
    /// Social Login
-   signInWithGoogle() {
+   loginWithGoogle() {
       this.auth.googleLogin()
          .then(() => this.afterSignIn());
    }
 
-   signInWithFacebook() {
+   loginWithFacebook() {
       this.auth.facebookLogin()
          .then(() => this.afterSignIn());
    }
-
-   /// Shared
 
    private afterSignIn() {
       // Do after login stuff here, such router redirects, toast messages, etc.
       this.router.navigate(['/']);
    }
    onTabChange(index: any) {
-      console.log('tab changed', index);
       this.tabIndex = index;
    }
 }

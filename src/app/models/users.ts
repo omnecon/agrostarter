@@ -9,11 +9,13 @@ export interface User {
    firstName?: string;
    streetNameNumber?: string;
    city?: string;
-   isNewsletterEnabled: boolean;
+   isNewsletterEnabled?: boolean;
    country?: string;
    isMale: boolean;
-   isNotifictionsEnabled: boolean;
+   isNotifictionsEnabled?: boolean;
    phone?: string;
    agbAcceptedDate?: any;
    isAgbAccepted?: boolean;
+   accessToken: any;
+   terms: boolean;
 }

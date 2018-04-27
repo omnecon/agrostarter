@@ -32,9 +32,9 @@ export class NotifyService {
    update(content: string, style: 'error' | 'info' | 'success') {
       const msg: Msg = { content, style };
       this._msgSource.next(msg);
-      setTimeout(() => {
-         this._msgSource.next(null);
-      }, 2000);
+      // setTimeout(() => {
+      //    this._msgSource.next(null);
+      // }, 2000);
    }
 
    clear() {
