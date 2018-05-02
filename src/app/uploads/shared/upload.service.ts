@@ -10,7 +10,6 @@ export class UploadService {
    basePath = 'uploads';
    uploadsRef: AngularFireList<Upload>;
    uploads: Observable<Upload[]>;
-   uploadTask: firebase.storage.UploadTask;
    constructor(private db: AngularFireDatabase) { }
 
    getUploads() {
@@ -18,6 +17,7 @@ export class UploadService {
          return actions.map((a) => {
             const data = a.payload.val();
             const $key = a.payload.key;
+            console.log('{ $key, ...data }', { $key, ...data });
             return { $key, ...data };
          });
       });
@@ -37,10 +37,11 @@ export class UploadService {
       const storageRef = firebase.storage().ref();
       const uploadTask = storageRef.child(`${this.basePath}/${upload.file.name}`).put(upload.file);
 
-      this.uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED,
-         (snapshot) => {
+      uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED,
+         (snapshot: any) => {
             // upload in progress
-            upload.progress = (this.uploadTask.snapshot.bytesTransferred / this.uploadTask.snapshot.totalBytes) * 100;
+            const snap = snapshot;
+            upload.progress = (snap.bytesTransferred / snap.totalBytes) * 100;
          },
          (error) => {
             // upload failed

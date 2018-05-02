@@ -25,7 +25,7 @@ const routes: Routes = [
    { path: 'reset-password', component: ResetPassComponent },
    { path: 'account-activation', component: AccountActivationComponent },
    { path: 'my-profile', component: UserProfileComponent, canActivate: [AuthGuard] },
-   { path: 'product', component: ProductPageComponent, canActivate: [AuthGuard] },
+   { path: 'product', component: UploadsListComponent, canActivate: [AuthGuard] },
    { path: 'message', component: MessagePageComponent, canActivate: [AuthGuard] },
    // { path: 'items', component: ItemsListComponent, canActivate: [AuthGuard] },
    // uploads are lazy loaded
