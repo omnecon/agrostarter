@@ -14,7 +14,6 @@ import { MessagePageComponent } from './message/message-page.component';
 import { UploadsListComponent } from './uploads/uploads-list/uploads-list.component';
 import { ProductPageComponent } from './product/product-page.component';
 
-
 import { AuthGuard } from './core/auth.guard';
 import { CoreModule } from './core/core.module';
 
@@ -25,7 +24,7 @@ const routes: Routes = [
    { path: 'reset-password', component: ResetPassComponent },
    { path: 'account-activation', component: AccountActivationComponent },
    { path: 'my-profile', component: UserProfileComponent, canActivate: [AuthGuard] },
-   { path: 'product', component: UploadsListComponent, canActivate: [AuthGuard] },
+   { path: 'product', component: ProductPageComponent, canActivate: [AuthGuard] },
    { path: 'message', component: MessagePageComponent, canActivate: [AuthGuard] },
    // { path: 'items', component: ItemsListComponent, canActivate: [AuthGuard] },
    // uploads are lazy loaded
