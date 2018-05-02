@@ -10,10 +10,12 @@ import { Observable } from 'rxjs/Observable';
 import { switchMap } from 'rxjs/operators';
 import { User } from '../models';
 
-
 @Injectable()
 export class AuthService {
-
+   actionCodeSettings = {
+      url: ``,
+      handleCodeInApp: false,
+   };
    user: Observable<User | null>;
    private userDoc: AngularFirestoreDocument<User>;
    accessToken = '';
@@ -124,8 +126,9 @@ export class AuthService {
    // Sends email allowing user to reset password
    resetPassword(email: string) {
       const fbAuth = firebase.auth();
+      this.actionCodeSettings.url = `http://localhost:4200/login`;
 
-      return fbAuth.sendPasswordResetEmail(email)
+      return fbAuth.sendPasswordResetEmail(email, this.actionCodeSettings)
          .then(() => this.notify.update('Password update email sent', 'info'))
          .catch((error) => this.handleError(error));
    }

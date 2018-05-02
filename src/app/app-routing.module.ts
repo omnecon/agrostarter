@@ -14,7 +14,6 @@ import { MessagePageComponent } from './message/message-page.component';
 import { UploadsListComponent } from './uploads/uploads-list/uploads-list.component';
 import { ProductPageComponent } from './product/product-page.component';
 
-
 import { AuthGuard } from './core/auth.guard';
 import { CoreModule } from './core/core.module';
 
