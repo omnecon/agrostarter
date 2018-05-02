@@ -11,6 +11,7 @@ import { ItemsListComponent } from './items/items-list/items-list.component';
 import { ReadmePageComponent } from './ui/readme-page/readme-page.component';
 import { NotesListComponent } from './notes/notes-list/notes-list.component';
 import { MessagePageComponent } from './message/message-page.component';
+import { UploadsListComponent } from './uploads/uploads-list/uploads-list.component';
 import { ProductPageComponent } from './product/product-page.component';
 
 
@@ -26,10 +27,7 @@ const routes: Routes = [
    { path: 'my-profile', component: UserProfileComponent, canActivate: [AuthGuard] },
    { path: 'product', component: ProductPageComponent, canActivate: [AuthGuard] },
    { path: 'message', component: MessagePageComponent, canActivate: [AuthGuard] },
-
-
    // { path: 'items', component: ItemsListComponent, canActivate: [AuthGuard] },
-   // { path: 'mypostings', component: NotesListComponent, canActivate: [AuthGuard] },
    // uploads are lazy loaded
    { path: 'uploads', loadChildren: './uploads/shared/upload.module#UploadModule', canActivate: [AuthGuard] },
 ];

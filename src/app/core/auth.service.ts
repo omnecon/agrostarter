@@ -37,7 +37,6 @@ export class AuthService {
    googleLogin() {
       const provider = new firebase.auth.GoogleAuthProvider();
       provider.addScope('https://www.googleapis.com/auth/user.birthday.read');
-      provider.addScope('https://www.googleapis.com/auth/user.emails.read');
       provider.addScope('https://www.googleapis.com/auth/user.phonenumbers.read');
       provider.addScope('https://www.googleapis.com/auth/userinfo.profile');
       return this.oAuthLogin(provider);
@@ -46,7 +45,6 @@ export class AuthService {
    facebookLogin() {
       const provider = new firebase.auth.FacebookAuthProvider();
       provider.addScope('user_birthday');
-      provider.addScope('email');
       return this.oAuthLogin(provider);
    }
 
@@ -64,14 +62,12 @@ export class AuthService {
                .ref
                .get().then((doc) => {
                   if (doc.exists) {
-                     console.log('Document exist data:', doc.data());
                      const data = {
                         uid: user.uid,
                      };
                      this.notify.update('Welcome to Agrostarter!!!', 'success');
                      this.updateUserData(data);
                   } else {
-                     console.log('No such document!', providerId);
                      if (providerId === 'facebook.com') {
                         const data = {
                            uid: user.uid,
@@ -119,6 +115,7 @@ export class AuthService {
       return this.afAuth.auth.signInWithEmailAndPassword(email, password)
          .then((user) => {
             this.notify.update('Welcome to Agrostarter!!!', 'success');
+
             this.updateUserData(user); // if using firestore
          })
          .catch((error) => this.handleError(error));
@@ -151,8 +148,11 @@ export class AuthService {
       const data = {
          uid: user.uid,
       };
+      window.localStorage.setItem('user', JSON.stringify(user));
+      const test: any = JSON.parse(window.localStorage.getItem('user'));
       return userRef.set(data, { merge: true });
    }
+
    // Sets user data to firestore after succesful sigin
    setUserData(user: any, newUser?: boolean) {
       const userRef: AngularFirestoreDocument<User> = this.afs.doc(`users/${user.uid}`);
@@ -180,6 +180,7 @@ export class AuthService {
          data.agbAcceptedDate = new Date();
       }
       window.localStorage.setItem('user', JSON.stringify(data));
+      const test: any = JSON.parse(window.localStorage.getItem('user'));
       return userRef.set(data);
    }
 }

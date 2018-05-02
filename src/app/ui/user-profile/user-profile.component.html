@@ -1,24 +1,3 @@
-<!-- <div class="box">
-   <div *ngIf="auth.user | async; then authenticated else guest">  -->
-<!-- template will replace this div -->
-<!-- </div>
-</div> -->
-<!-- User logged in -->
-<!-- <ng-template #authenticated>
-   <div *ngIf="auth.user | async as user">
-      <h5>Howdy, {{ user.displayName }}</h5>
-      <img class="card-img-top" [src]="user.photoURL || 'https://api.adorable.io/avatars/109/fire.png'" width=50px>
-      <br>
-      <p class="text-truncate">UID: {{ user.uid }}</p>
-      <button class="button" (click)="logout()">Logout</button>
-   </div>
-</ng-template> -->
-<!-- User NOT logged in -->
-<!-- <ng-template #guest class="box">
-   <h5>Howdy, GUEST</h5>
-   <p class="card-text">Login to get started...</p>
-   <button class="button" routerLink="/login">Login</button>
-</ng-template> -->
 <div class="container">
    <div *ngIf="userProfile | async as user">
       {{ user.email }}
@@ -27,7 +6,7 @@
    <form [formGroup]="userProfileForm" (ngSubmit)="updateProfile()">
       <div class="row">
          <div class="col-12">
-            <h5>Personal Infornmation</h5>
+            <h5>Personal Information</h5>
          </div>
       </div>
       <div class="row">

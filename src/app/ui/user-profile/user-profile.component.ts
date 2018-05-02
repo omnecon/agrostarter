@@ -44,10 +44,10 @@ export class UserProfileComponent implements OnInit {
    // tslint:disable-next-line:max-line-length
    constructor(public auth: AuthService, public db: DbService, private fb: FormBuilder, private afs: AngularFirestore, private sanitizer: DomSanitizer) {
       this.startDate = new Date(1990, 0, 1);
-      const newUser: any = window.localStorage.getItem('user');
-      const finalUser = JSON.parse(newUser);
-      this.uid = finalUser.uid;
-      // this.accessToken = finalUser.accessToken;
+   }
+   ngOnInit() {
+      const newUser: any = JSON.parse(window.localStorage.getItem('user'));
+      this.uid = newUser.uid;
       this.userProfileForm = this.fb.group({
          'email': ['', [
             Validators.required,
@@ -65,8 +65,6 @@ export class UserProfileComponent implements OnInit {
          'lastName': [''],
          'dataOfBirth': [''],
       });
-   }
-   ngOnInit() {
       this.userDoc = this.afs.doc<User>(`users/${this.uid}`);
       this.userDoc.valueChanges().subscribe((data) => {
          this.user = data;

@@ -7,9 +7,10 @@ import * as firebase from 'firebase/app';
 import { AngularFireAuth } from 'angularfire2/auth';
 import { AngularFirestore, AngularFirestoreDocument } from 'angularfire2/firestore';
 import { User } from '../models';
+import { NotifyService } from './notify.service';
 @Injectable()
 export class DbService {
-   constructor(private router: Router, private afs: AngularFirestore) {
+   constructor(private router: Router, private afs: AngularFirestore, private notify: NotifyService) {
 
    }
 
@@ -36,7 +37,7 @@ export class DbService {
          terms: true,
       };
       return userRef.set(data).then((updateProfile: any) => {
-         console.log('updateProfile ====>', updateProfile);
+         this.notify.update('Your profile update successfully', 'success');
       });
    }
 

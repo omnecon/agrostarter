@@ -1,7 +1,7 @@
+
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 
@@ -27,7 +27,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MaterialModule } from './material/material.module';
 ///// End Material
 
-import { environment } from '../environments/environment';
+import { environment } from '../environments/environment.prod';
 
 import { AngularFireModule } from 'angularfire2';
 export const firebaseConfig = environment.firebaseConfig;
@@ -37,7 +37,7 @@ import { AngularFirestoreModule } from 'angularfire2/firestore';
 @NgModule({
    declarations: [
       AppComponent,
-      
+
    ],
    imports: [
       BrowserModule,
@@ -48,6 +48,7 @@ import { AngularFirestoreModule } from 'angularfire2/firestore';
       ItemModule,
       MessageModule,
       ProductModule,
+      UploadModule,
       UiModule,
       NotesModule,
       AngularFireModule.initializeApp(firebaseConfig),

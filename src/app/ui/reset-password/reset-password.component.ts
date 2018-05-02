@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { ReactiveFormsModule, FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { AuthService } from '../../core/auth.service';
 import * as firebase from 'firebase/app';
+import { NotifyService } from '../../core/notify.service';
 type UserFields = 'email';
 type FormErrors = { [u in UserFields]: string };
 @Component({
@@ -22,7 +23,7 @@ export class ResetPassComponent implements OnInit {
       },
    };
 
-   constructor(public auth: AuthService, private router: Router, private fb: FormBuilder) {
+   constructor(public auth: AuthService, private router: Router, private fb: FormBuilder, public notify: NotifyService) {
 
    }
    ngOnInit() {
@@ -70,6 +71,10 @@ export class ResetPassComponent implements OnInit {
             }
          }
       }
+   }
+
+   login() {
+      this.router.navigate(['/login']);
    }
 
 }

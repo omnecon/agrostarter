@@ -27,22 +27,24 @@
       </div>
    </div>
    <ng-template #alreadyLoggedIn>
-      <div class="nav-right nav-menu" [ngClass]="{'is-active': show}">
-         <a class="nav-item" routerLink="/message">
-            Message
-         </a>
-         <a class="nav-item" routerLink="/product">
-            My Products
-         </a>
-         <a class="nav-item" routerLink="/my-profile">
-            My Profile
-         </a>
-         <a class="nav-item" (click)="logout()">
-            Logout
-         </a>
-         <button mat-raised-button color="accent" class="make-offer">
-            Make an offer
-         </button>
+      <div>
+         <div class="nav-right nav-menu" [ngClass]="{'is-active': show}">
+            <a class="nav-item" routerLink="/message">
+               Message
+            </a>
+            <a class="nav-item" routerLink="/product">
+               My Products
+            </a>
+            <a class="nav-item" routerLink="/my-profile">
+               My Profile
+            </a>
+            <a class="nav-item" (click)="logout()">
+               Logout
+            </a>
+            <button mat-raised-button color="accent" class="make-offer">
+               Make an offer
+            </button>
+         </div>
       </div>
    </ng-template>
 </nav>
