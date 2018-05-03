@@ -1,7 +1,11 @@
-// export class Item {
-//   $key: string;
-//   title: string;
-//   body: string;
-//   active = true;
-//   timeStamp: number;
-// }
+export class product {
+   pid?: string;
+   categories: Array<any>;
+   images: Array<any>;
+   location: Geolocation;
+   price: number;
+   status: string;
+   text: string;
+   title: string;
+   questions?: Array<any>;
+}

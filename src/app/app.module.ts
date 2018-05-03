@@ -27,17 +27,15 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MaterialModule } from './material/material.module';
 ///// End Material
 
-import { environment } from '../environments/environment.prod';
+import { environment } from '../environments/environment';
 
 import { AngularFireModule } from 'angularfire2';
 export const firebaseConfig = environment.firebaseConfig;
 import { AngularFirestoreModule } from 'angularfire2/firestore';
 
-
 @NgModule({
    declarations: [
       AppComponent,
-
    ],
    imports: [
       BrowserModule,
@@ -54,6 +52,7 @@ import { AngularFirestoreModule } from 'angularfire2/firestore';
       AngularFireModule.initializeApp(firebaseConfig),
       BrowserAnimationsModule,
       MaterialModule,
+
    ],
    bootstrap: [
       AppComponent,

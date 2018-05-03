@@ -7,7 +7,7 @@ import { Observable } from 'rxjs/Observable';
 @Injectable()
 export class UploadService {
 
-   basePath = 'uploads';
+   basePath = 'products';
    uploadsRef: AngularFireList<Upload>;
    uploads: Observable<Upload[]>;
    constructor(private db: AngularFireDatabase) { }
@@ -17,7 +17,7 @@ export class UploadService {
          return actions.map((a) => {
             const data = a.payload.val();
             const $key = a.payload.key;
-            console.log('{ $key, ...data }', { $key, ...data });
+            console.log('test ', { $key, ...data });
             return { $key, ...data };
          });
       });
@@ -36,7 +36,8 @@ export class UploadService {
    pushUpload(upload: Upload) {
       const storageRef = firebase.storage().ref();
       const uploadTask = storageRef.child(`${this.basePath}/${upload.file.name}`).put(upload.file);
-
+      const newUser: any = JSON.parse(window.localStorage.getItem('user'));
+      const uid = newUser.uid;
       uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED,
          (snapshot: any) => {
             // upload in progress
@@ -52,6 +53,7 @@ export class UploadService {
             if (uploadTask.snapshot.downloadURL) {
                upload.url = uploadTask.snapshot.downloadURL;
                upload.name = upload.file.name;
+               upload.uid = uid;
                this.saveFileData(upload);
                return;
             } else {

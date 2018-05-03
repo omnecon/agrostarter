@@ -18,7 +18,9 @@
                {{ formErrors.password }}
             </div>
             <br>
-            <a class="help is-info" (click)="resetPassword()" style="float: right;text-align: right;">Forget Password?</a>
+            <div class="help is-info" style="float: right;text-align: right;">
+               <a (click)="resetPassword()">Forget Password?</a>
+            </div>
             <br>
             <br>
             <!-- <div *ngIf="userForm.valid" class="notification is-success">Form Looks valid</div> -->

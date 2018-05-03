@@ -10,9 +10,16 @@ import { SharedModule } from '../../shared/shared.module';
 import { ProductService } from './product.service';
 
 import { ProductPageComponent } from '../product-page.component';
+import { SlideshowModule } from 'ng-simple-slideshow';
 
+import { AgmCoreModule } from '@agm/core';
+import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
 @NgModule({
    imports: [
+      AgmCoreModule.forRoot({
+         libraries: ['places'],
+      }),
+      NgMultiSelectDropDownModule.forRoot(),
       CommonModule,
       SharedModule,
       ReactiveFormsModule,
@@ -20,6 +27,7 @@ import { ProductPageComponent } from '../product-page.component';
       AngularFireDatabaseModule,
       BrowserAnimationsModule,
       MaterialModule,
+      SlideshowModule,
    ],
    declarations: [
       ProductPageComponent,

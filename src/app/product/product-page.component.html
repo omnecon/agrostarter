@@ -1,2 +1,86 @@
-<h1>Product module!</h1>
-<p>App for taking part in auctions for agrar-products </p>
+<div class="row">
+   <div class="col-sm">
+      <div *ngIf="currentUpload && (currentUpload?.progress<100)">
+         <span class="help is-danger"> Progress: {{currentUpload?.name}} | {{currentUpload?.progress }}% Complete
+         </span>
+         <progress class="progress is-success" min=1 max=100 value="{{ currentUpload?.progress }}"></progress>
+      </div>
+      <div class="img-box">
+         <slideshow [minHeight]="'200px'" [autoPlay]="true" [showArrows]="true" [imageUrls]="imageSources" [lazyLoad]="imageSources?.length > 0" [autoPlayWaitForLazyLoad]="true" *ngIf="imageSources?.length > 1">
+         </slideshow>
+         <div *ngIf="imageSources?.length < 1" class="no-img">No Images are available</div>
+      </div>
+      <div class="img-drag-drop">
+         <input type="file" multiple (change)="detectFiles($event)">
+      </div>
+      <div style="float:left">{{totalImgUpload}} Files added
+         <span *ngIf="totalImgUpload > 0">,Please Upload it.</span>
+      </div>
+      <div class="custom-file-upload">
+         <span class="btn btn-default btn-file" (click)="uploadMulti()">
+            Upload Images
+         </span>
+      </div>
+   </div>
+</div>
+<form [formGroup]="productForm" (ngSubmit)="addProduct()">
+   <div class="row">
+      <div class="col-sm">
+         <mat-form-field class="input-full-width">
+            <label for="title">Title *</label>
+            <input matInput type="text" id="title" formControlName="title" required>
+         </mat-form-field>
+         <div *ngIf="formErrors.title" class="help is-danger">
+            {{ formErrors.title }}
+         </div>
+         <mat-form-field class="input-full-width">
+            <label for="desc">Description</label>
+            <textarea matInput formControlName="desc" matAutosizeMinRows="10"></textarea>
+         </mat-form-field>
+         <div *ngIf="formErrors.desc" class="help is-danger">
+            {{ formErrors.desc }}
+         </div>
+         <!-- <mat-form-field class="input-full-width">
+            <mat-select placeholder="Category" formControlName="category" required>
+               <mat-option>Select Category</mat-option>
+               <mat-option value="Food">Food</mat-option>
+               <mat-option value="Vehicle">Vehicle</mat-option>
+            </mat-select>
+         </mat-form-field> -->
+         <ng-multiselect-dropdown formControlName="category" [data]="categories" [settings]="dropdownSettings" (onSelect)="onItemSelect($event)" (onSelectAll)="onSelectAll($event)" (onDeSelectAll)="onDeSelectAll($event)" (onDeSelect)="onItemDeSelect($event)" required>
+         </ng-multiselect-dropdown>
+         <div *ngIf="formErrors.category" class="help is-danger">
+            {{ formErrors.category }}
+         </div>
+      </div>
+      <div class="col-sm">
+         <mat-form-field class="input-full-width">
+            <label for="location">Location</label>
+            <input matInput type="text" id="location" formControlName="location">
+         </mat-form-field>
+         <div *ngIf="formErrors.location" class="help is-danger">
+            {{ formErrors.location }}
+         </div>
+         <mat-form-field class="input-full-width">
+            <label for="price">Price *</label>
+            <input matInput type="text" id="price" formControlName="price" required>
+         </mat-form-field>
+         <div *ngIf="formErrors.price" class="help is-danger">
+            {{ formErrors.price }}
+         </div>
+         <br>
+         <br>
+         <mat-radio-group formControlName="status">
+            <mat-radio-button value='default'>Draft</mat-radio-button> &nbsp;&nbsp;
+            <mat-radio-button value='Published'>Publish</mat-radio-button>
+         </mat-radio-group>
+      </div>
+   </div>
+   <div class="row">
+      <div class="col-sm">
+         <br>
+         <br>
+         <button mat-raised-button color="accent" type="submit" class="btn btn-block btn-lg" [disabled]="!productForm.valid">Add Product</button>
+      </div>
+   </div>
+</form>

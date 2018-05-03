@@ -1,3 +1,4 @@
+import { Subject } from 'rxjs/Subject';
 import { Component } from '@angular/core';
 
 import { UploadService } from '../shared/upload.service';
@@ -38,7 +39,6 @@ export class UploadFormComponent {
       }
 
       Array.from(files).forEach((file) => {
-         console.log('file  =============== ', file);
          this.currentUpload = new Upload(file);
          this.upSvc.pushUpload(this.currentUpload);
       });
