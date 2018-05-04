@@ -17,7 +17,6 @@ export class UploadService {
          return actions.map((a) => {
             const data = a.payload.val();
             const $key = a.payload.key;
-            console.log('test ', { $key, ...data });
             return { $key, ...data };
          });
       });

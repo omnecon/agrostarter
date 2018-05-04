@@ -12,7 +12,8 @@ import { ReadmePageComponent } from './ui/readme-page/readme-page.component';
 import { NotesListComponent } from './notes/notes-list/notes-list.component';
 import { MessagePageComponent } from './message/message-page.component';
 import { UploadsListComponent } from './uploads/uploads-list/uploads-list.component';
-import { ProductPageComponent } from './product/product-page.component';
+import { ProductPageComponent } from './product/product-form/product-page.component';
+import { ProductDetailsComponent } from './product/product-details/product-details.component';
 
 import { AuthGuard } from './core/auth.guard';
 import { CoreModule } from './core/core.module';
@@ -25,6 +26,7 @@ const routes: Routes = [
    { path: 'account-activation', component: AccountActivationComponent },
    { path: 'my-profile', component: UserProfileComponent, canActivate: [AuthGuard] },
    { path: 'product', component: ProductPageComponent, canActivate: [AuthGuard] },
+   { path: 'product-details', component: ProductDetailsComponent },
    { path: 'message', component: MessagePageComponent, canActivate: [AuthGuard] },
    // { path: 'items', component: ItemsListComponent, canActivate: [AuthGuard] },
    // uploads are lazy loaded

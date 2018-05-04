@@ -1,0 +1,37 @@
+.lg-img-box {
+        width: 100%;
+        border: 1px solid #ccc;
+        padding: 6px;
+        background-color: #fff;
+}
+
+.sm-img-box {
+        width: 100px;
+        border: 1px solid #ccc;
+        padding: 6px;
+        background-color: #fff;
+        height: 100px;
+        margin-right: 6px;
+        float: left; //   background-size: contain;
+        //   background-size: 94px 94px;
+        //   background-repeat: no-repeat;
+        img {
+                height: 88px;
+                width: 94px;
+        }
+}
+
+.sm-img-avatar {
+        width: 50px;
+        border: 1px solid #ccc;
+        padding: 3px;
+        background-color: #fff;
+        height: 50px;
+        margin-right: 3px;
+        float: left;
+        border-radius: 50%;
+        img {
+                height: 44px;
+                width: 44px;
+        }
+}

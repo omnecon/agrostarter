@@ -1,0 +1,55 @@
+<div class="container">
+   <div class="row" *ngIf="product">
+      <div class="col-4">
+         <div class="lg-img-box">
+            <!-- <img [src]="product.images[0].url"> -->
+            <slideshow [minHeight]="'200px'" [autoPlay]="true" [showArrows]="true" [imageUrls]="product.images" [lazyLoad]="product.images?.length > 1" [autoPlayWaitForLazyLoad]="true" *ngIf="product.images?.length >= 1">
+            </slideshow>
+         </div>
+         <br>
+         <div *ngFor="let image of product.images" class="sm-img-box">
+            <img [src]="image.url">
+         </div>
+      </div>
+      <div class="col-8">
+         <h3>{{product.title}}</h3>
+         <p>
+            {{product.text}}
+         </p>
+         <p>
+            <strong>Location: {{productLocation}}</strong>
+         </p>
+         <p>
+            <strong>Price: {{product.price | currency:'EUR':true}}</strong>
+         </p>
+         <p>
+            <span *ngFor="let catgory of product.categories">
+               <strong>Categories: </strong>{{catgory.cat_text}}
+            </span>
+         </p>
+         <div class="row">
+            <div class="col-6">
+               <button mat-raised-button color="accent" class="btn btn-lg">Make an offers</button>
+            </div>
+            <div class="col-6">
+               <button mat-raised-button color="accent" class="btn btn-lg">Ask a questions</button>
+            </div>
+         </div>
+      </div>
+   </div>
+   <br>
+   <div class="row" *ngIf="user">
+      <div class="col-6">
+         <h1>Offers</h1>
+         <hr>
+         <img [src]="user.photoURL" (error)="'assets/profile/profile-images.jpg'" class="sm-img-avatar" />
+         <p style="line-height: 50px; font-size: 14px">
+            {{user.firstName}} {{user.lastName}} has made an offer
+         </p>
+      </div>
+      <div class="col-6">
+         <h1>Questions</h1>
+         <hr>
+      </div>
+   </div>
+</div>

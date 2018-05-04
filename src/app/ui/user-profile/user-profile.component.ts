@@ -105,8 +105,8 @@ export class UserProfileComponent implements OnInit {
 
       this.onValueChanged(); // reset validation messages
    }
-   onValueChanged(data?: any) {
 
+   onValueChanged(data?: any) {
       if (!this.userProfileForm) { return; }
       const form = this.userProfileForm;
       for (const field in this.formErrors) {
@@ -127,8 +127,8 @@ export class UserProfileComponent implements OnInit {
             }
          }
       }
-
    }
+
    updateProfile() {
       // Get a reference to the database service
       if (this.userProfileForm.valid) {
