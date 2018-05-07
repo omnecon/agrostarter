@@ -2,13 +2,12 @@
    <div class="row" *ngIf="product">
       <div class="col-4">
          <div class="lg-img-box">
-            <!-- <img [src]="product.images[0].url"> -->
             <slideshow [minHeight]="'200px'" [autoPlay]="true" [showArrows]="true" [imageUrls]="product.images" [lazyLoad]="product.images?.length > 1" [autoPlayWaitForLazyLoad]="true" *ngIf="product.images?.length >= 1">
             </slideshow>
          </div>
          <br>
-         <div *ngFor="let image of product.images" class="sm-img-box">
-            <img [src]="image.url">
+         <div *ngFor="let image of product.images">
+            <img [src]="image.url" class="sm-img-box" [ngStyle]="{'width':(100/product.images.length) + '%' }">
          </div>
       </div>
       <div class="col-8">
@@ -38,18 +37,56 @@
       </div>
    </div>
    <br>
-   <div class="row" *ngIf="user">
+   <div class="row">
       <div class="col-6">
-         <h1>Offers</h1>
+         <h3>Offers</h3>
          <hr>
-         <img [src]="user.photoURL" (error)="'assets/profile/profile-images.jpg'" class="sm-img-avatar" />
-         <p style="line-height: 50px; font-size: 14px">
-            {{user.firstName}} {{user.lastName}} has made an offer
-         </p>
+         <span *ngIf="offersBy?.length>0">
+            <div *ngFor="let user of offersBy">
+               <img [src]="user.photoURL" (error)="'assets/profile/profile-images.jpg'" class="sm-img-avatar" />
+               <p style="line-height: 50px; font-size: 14px">
+                  {{user.firstName}} {{user.lastName}} has made an offer
+               </p>
+            </div>
+         </span>
+         <form [formGroup]="offersForm" (ngSubmit)="addOffer()">
+            <mat-form-field class="input-full-width">
+               <input matInput type="text" id="desc" formControlName="desc" required placeholder="Offer text">
+            </mat-form-field>
+            <div *ngIf="formOfferErrors.desc" class="help is-danger">
+               {{ formOfferErrors.desc }}
+            </div>
+            <mat-form-field class="input-full-width">
+               <input matInput type="number" id="price1" formControlName="price" required placeholder="Offer Price">
+            </mat-form-field>
+            <div *ngIf="formOfferErrors.price" class="help is-danger">
+               {{ formOfferErrors.price }}
+            </div>
+            <button mat-raised-button color="accent" type="submit" class="btn btn-sm" [disabled]="!offersForm.valid">Add</button>
+         </form>
       </div>
       <div class="col-6">
-         <h1>Questions</h1>
+         <h3>Questions</h3>
          <hr>
+         <span *ngIf="questionsBy?.length>0">
+            <div *ngFor="let user of questionsBy">
+               <img [src]="user.photoURL" (error)="'assets/profile/profile-images.jpg'" class="sm-img-avatar" />
+               <p style="line-height: 50px; font-size: 14px">
+                  {{user.firstName}} {{user.lastName}}:
+                  <span style="color:#1c90f3">{{user.question}}</span>
+                  <br> {{user.ans}}
+               </p>
+            </div>
+         </span>
+         <form [formGroup]="questionsForm" (ngSubmit)="addQuestion()">
+            <mat-form-field class="input-full-width">
+               <input matInput type="text" id="que1" formControlName="que" required placeholder="Question">
+            </mat-form-field>
+            <button mat-raised-button color="accent" type="submit" class="btn btn-sm" [disabled]="!questionsForm.valid">Add</button>
+            <div *ngIf="formErrors.que" class="help is-danger">
+               {{ formErrors.que }}
+            </div>
+         </form>
       </div>
    </div>
 </div>

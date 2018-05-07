@@ -2,7 +2,7 @@ export class product {
    pid?: string;
    categories: Array<any>;
    images: Array<any>;
-   location: Geolocation;
+   location: number[];
    price: number;
    status: string;
    text: string;

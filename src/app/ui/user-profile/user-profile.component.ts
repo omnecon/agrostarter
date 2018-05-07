@@ -8,6 +8,7 @@ import { AngularFireAuth } from 'angularfire2/auth';
 import { AngularFirestore, AngularFirestoreDocument, AngularFirestoreCollection } from 'angularfire2/firestore';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Observable } from 'rxjs/Observable';
+import { Upload } from '../../models/upload';
 type UserProfileFields = 'email' | 'phone';
 type FormProfileErrors = { [u in UserProfileFields]: string };
 
@@ -31,6 +32,9 @@ export class UserProfileComponent implements OnInit {
          'pattern': 'Phone number must be 10 digit number.',
       },
    };
+   selectedFiles: FileList | null;
+   currentUpload: Upload;
+   uploads: Observable<Upload[]>;
    startDate: Date;
    uid: any;
    user: any;
@@ -66,10 +70,21 @@ export class UserProfileComponent implements OnInit {
          'dataOfBirth': [''],
       });
       this.userDoc = this.afs.doc<User>(`users/${this.uid}`);
-      this.userDoc.valueChanges().subscribe((data) => {
+      this.userDoc.valueChanges().subscribe((data: User) => {
+
          this.user = data;
+         window.localStorage.setItem('user', JSON.stringify(this.user));
          this.buildForm(this.user);
       });
+
+      // get uploaded images data
+      this.uploads = this.db.getUploads();
+      if (this.uploads) {
+         this.uploads.subscribe((imgUrl: any) => {
+
+            this.imagem = imgUrl;
+         });
+      }
 
    }
    buildForm(user: User) {
@@ -99,7 +114,7 @@ export class UserProfileComponent implements OnInit {
          'dataOfBirth': [user.dataOfBirth],
       });
       this.imagem = user.photoURL;
-      this.accessToken = user.accessToken;
+      this.accessToken = user.accessToken ? user.accessToken : '';
       this.showNoImg = false;
       this.userProfileForm.valueChanges.subscribe((data) => this.onValueChanged(data));
 
@@ -150,7 +165,7 @@ export class UserProfileComponent implements OnInit {
             accessToken: this.accessToken,
             terms: true,
          };
-         // this.db.writeUserData(data);
+
          this.userDoc.update(data);
       }
    }
@@ -167,5 +182,31 @@ export class UserProfileComponent implements OnInit {
       reader.onerror = (error) => {
          console.log('Erro ao ler a imagem : ', error);
       };
+   }
+
+   detectFiles($event: Event) {
+      this.selectedFiles = ($event.target as HTMLInputElement).files;
+      const file = this.selectedFiles;
+      if (file && file.length === 1) {
+         this.currentUpload = new Upload(file.item(0));
+         this.db.pushUpload(this.currentUpload);
+         this.showNoImg = false;
+      } else {
+         console.error('No file found!');
+      }
+   }
+
+   uploadSingle() {
+      const file = this.selectedFiles;
+      if (file && file.length === 1) {
+         this.currentUpload = new Upload(file.item(0));
+         this.db.pushUpload(this.currentUpload);
+      } else {
+         console.error('No file found!');
+      }
+   }
+
+   updateUrlOnErr() {
+      this.imagem = 'assets/profile/profile-images.jpg';
    }
 }

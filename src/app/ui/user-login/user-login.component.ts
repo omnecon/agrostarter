@@ -90,6 +90,7 @@ export class UserLoginComponent implements OnInit {
       this.userRegistrationForm.valueChanges.subscribe((data) => this.onValueChanged(data, 'register'));
       this.onValueChanged(); // reset validation messages
    }
+
    login() {
       this.auth.emailLogin(this.userForm.value['email'], this.userForm.value['password']).then((data) => {
          this.afterSignIn();
@@ -121,8 +122,6 @@ export class UserLoginComponent implements OnInit {
    resetPassword() {
       this.router.navigate(['/reset-password']);
    }
-
-
 
    // Updates validation state on form changes.
    // tslint:disable-next-line:cyclomatic-complexity

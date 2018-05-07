@@ -4,41 +4,63 @@ import { Injectable } from '@angular/core';
 import { Router, NavigationStart } from '@angular/router';
 import { Subject } from 'rxjs/Subject';
 import * as firebase from 'firebase/app';
-import { AngularFireAuth } from 'angularfire2/auth';
-import { AngularFirestore, AngularFirestoreDocument } from 'angularfire2/firestore';
-import { User } from '../models';
-import { NotifyService } from './notify.service';
+import { Observable } from 'rxjs/Observable';
+import { AngularFireDatabase } from 'angularfire2/database';
+import { User, Upload } from '../models';
+
 @Injectable()
 export class DbService {
-   constructor(private router: Router, private afs: AngularFirestore, private notify: NotifyService) {
-
+   uid: any;
+   imgbasePath = 'users-images';
+   uploads: Observable<Upload[]>;
+   private _myPic: Subject<any> = new Subject<any>();
+   currentUserProfileImg: any;
+   constructor(private db: AngularFireDatabase) {
+      const newUser: any = JSON.parse(window.localStorage.getItem('user'));
+      this.uid = newUser.uid;
    }
 
-   writeUserData(updateUser: User) {
-      const user: any = firebase.auth().currentUser;
-      const userRef: AngularFirestoreDocument<User> = this.afs.doc(`users/${user.uid}`);
-      const data: User = {
-         uid: user.uid,
-         email: user.email || null,
-         photoURL: updateUser.photoURL || 'https://goo.gl/Fz9nrQ',
-         displayName: (`${updateUser.firstName} ${updateUser.lastName}`) || user.displayName,
-         postCode: updateUser.postCode || user.postCode,
-         lastName: updateUser.lastName || user.lastName,
-         dataOfBirth: updateUser.dataOfBirth || user.dataOfBirth,
-         firstName: updateUser.firstName || user.firstName,
-         streetNameNumber: updateUser.streetNameNumber || user.streetNameNumber,
-         city: updateUser.city || user.city,
-         isNewsletterEnabled: updateUser.isNewsletterEnabled || user.isNewsletterEnabled,
-         country: updateUser.country || user.country,
-         isMale: updateUser.isMale || user.isMale,
-         isNotifictionsEnabled: updateUser.isNewsletterEnabled || user.isNotifictionsEnabled,
-         phone: updateUser.phone || user.phone,
-         accessToken: user.accessToken,
-         terms: true,
-      };
-      return userRef.set(data).then((updateProfile: any) => {
-         this.notify.update('Your profile update successfully', 'success');
-      });
+   pushUpload(upload: Upload) {
+      const storageRef = firebase.storage().ref();
+      const ext = upload.file.name.split('.').pop();
+      const timestamp = new Date().getTime().toString();
+      const filename = `agruno_user_${this.uid}_${timestamp}.${ext}`;
+      const uploadTask = storageRef.child(`${this.imgbasePath}/${filename}`).put(upload.file);
+
+      uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED,
+         (snapshot: any) => {
+            // upload in progress
+            const snap = snapshot;
+            upload.progress = (snap.bytesTransferred / snap.totalBytes) * 100;
+         },
+         (error) => {
+            // upload failed
+            console.log(error);
+         },
+         () => {
+            // upload success
+            if (uploadTask.snapshot.downloadURL) {
+               this.currentUserProfileImg = uploadTask.snapshot.downloadURL;
+               upload.url = this.currentUserProfileImg;
+               upload.name = filename;
+               upload.uid = this.uid;
+               this.saveFileData(upload);
+               this._myPic.next(this.currentUserProfileImg);
+               return;
+            } else {
+               console.error('No download URL!');
+            }
+         },
+      );
+   }
+
+   // Writes the file details to the realtime db
+   private saveFileData(upload: Upload) {
+      this.db.list(`${this.imgbasePath}/`).push(upload);
+   }
+
+   getUploads() {
+      return this._myPic.asObservable();
    }
 
 }

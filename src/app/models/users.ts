@@ -11,11 +11,11 @@ export interface User {
    city?: string;
    isNewsletterEnabled?: boolean;
    country?: string;
-   isMale: boolean;
+   isMale?: boolean;
    isNotifictionsEnabled?: boolean;
    phone?: string;
    agbAcceptedDate?: any;
    isAgbAccepted?: boolean;
-   accessToken: any;
-   terms: boolean;
+   accessToken?: any;
+   terms?: boolean;
 }

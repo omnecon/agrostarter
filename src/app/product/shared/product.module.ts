@@ -12,6 +12,7 @@ import { ProductService } from './product.service';
 
 import { ProductPageComponent } from '../product-form/product-page.component';
 import { ProductDetailsComponent } from '../product-details/product-details.component';
+import { UserProductComponent } from '../user-product/user-product.component';
 
 import { SlideshowModule } from 'ng-simple-slideshow';
 
@@ -36,6 +37,7 @@ import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
    declarations: [
       ProductPageComponent,
       ProductDetailsComponent,
+      UserProductComponent,
    ],
    providers: [
       ProductService,

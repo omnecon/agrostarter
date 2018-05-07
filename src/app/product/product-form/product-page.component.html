@@ -3,7 +3,7 @@
       <div *ngIf="currentUpload && (currentUpload?.progress<100)">
          <span class="help is-danger"> Progress: {{currentUpload?.name}} | {{currentUpload?.progress }}% Complete
          </span>
-         <progress class="progress is-success" min=1 max=100 value="{{ currentUpload?.progress }}" style=""></progress>
+         <progress class="progress is-success" min=1 max=100 value="{{ currentUpload?.progress }}" style="height: 2px;"></progress>
       </div>
       <div class="img-box" style="position: relative">
          <slideshow [minHeight]="'200px'" [autoPlay]="true" [showArrows]="true" [imageUrls]="imageSources" [lazyLoad]="imageSources?.length > 1" [autoPlayWaitForLazyLoad]="true" *ngIf="imageSources?.length >= 1" #slideshow (onSwipeLeft)="getIndex($event)" (onSwipeLeft)="getIndex($event)" (onSlideLeft)="getIndex($event)" (onSlideRight)="getIndex($event)">
@@ -28,8 +28,8 @@
    <div class="row">
       <div class="col-sm">
          <mat-form-field class="input-full-width">
-            <label for="title">Title *</label>
-            <input matInput type="text" id="title" formControlName="title" required>
+            <label for="title1">Title *</label>
+            <input matInput type="text" id="title1" formControlName="title" required>
          </mat-form-field>
          <div *ngIf="formErrors.title" class="help is-danger">
             {{ formErrors.title }}
@@ -49,15 +49,15 @@
       </div>
       <div class="col-sm">
          <mat-form-field class="input-full-width">
-            <label for="location">Location</label>
-            <input matInput type="text" id="location" formControlName="location" required>
+            <label for="location1">Location</label>
+            <input matInput type="text" id="location1" formControlName="location" required>
          </mat-form-field>
          <div *ngIf="formErrors.location" class="help is-danger">
             {{ formErrors.location }}
          </div>
          <mat-form-field class="input-full-width">
-            <label for="price">Price *</label>
-            <input matInput type="number" id="price" formControlName="price" required>
+            <label for="price1">Price *</label>
+            <input matInput type="number" id="price1" formControlName="price" required>
          </mat-form-field>
          <div *ngIf="formErrors.price" class="help is-danger">
             {{ formErrors.price }}

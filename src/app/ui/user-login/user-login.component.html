@@ -4,8 +4,8 @@
          <h3>Login with Email</h3>
          <form [formGroup]="userForm" (ngSubmit)="login()">
             <mat-form-field class="input-full-width">
-               <label for="email">Email</label>
-               <input matInput type="email" id="email" formControlName="email" required (focus)="notify.clear()">
+               <label for="email1">Email</label>
+               <input matInput type="email" id="email1" formControlName="email" required (focus)="notify.clear()">
             </mat-form-field>
             <div *ngIf="formErrors.email" class="help is-danger">
                {{ formErrors.email }}
@@ -47,8 +47,8 @@
       <h3>Register with Email</h3>
       <form [formGroup]="userRegistrationForm" (ngSubmit)="signup()">
          <mat-form-field class="input-full-width">
-            <label for="email">Email</label>
-            <input matInput type="email" id="email" formControlName="email" required>
+            <label for="email2">Email</label>
+            <input matInput type="email2" id="email" formControlName="email" required>
          </mat-form-field>
          <div *ngIf="formRegErrors.email" class="help is-danger">
             {{ formRegErrors.email }}

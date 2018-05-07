@@ -15,13 +15,15 @@ import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 export class ProductService {
    private headers: HttpHeaders = new HttpHeaders();
    private _product: Subject<any> = new Subject<any>();
+   private _question: Subject<any> = new Subject<any>();
    private _offers: Subject<any> = new Subject<any>();
    private _productImg: Subject<any> = new Subject<any>();
    basePath = 'products';
-   imgbasePath = 'user-product-images';
+   imgbasePath = 'users-product-img';
    uploadsRef: AngularFireList<Upload>;
    uploads: Observable<Upload[]>;
    uid: any;
+   pid: any;
    productsCollection: AngularFirestoreCollection<product>;
    productsDocument: AngularFirestoreDocument<product>;
 
@@ -45,22 +47,62 @@ export class ProductService {
    }
 
    getOffers() {
-      this.afs.collection('offers').ref.get().then((snapshot) => {
+      this.afs.collection('offers', (ref) => ref.where('userId', '==', this.uid)).ref.get().then((snapshot) => {
          snapshot.forEach((doc) => {
-
-            this._offers.next(doc.data());
+            if (doc.exists) {
+               this._offers.next(doc.data());
+            } else {
+               // doc.data() will be undefined in this case
+               console.log('No such document!');
+            }
          });
       });
       return this._offers.asObservable();
    }
 
-   createProduct(productData: any) {
+   createProduct(productData: product) {
       this.productsCollection.add(productData).then((data) => {
-
          productData.pid = data.id;
+         this.pid = data.id;
          this._product.next(productData);
       });
       return this._product.asObservable();
+   }
+
+   createQue(queData: any) {
+      this.pid = queData.pid;
+      const qData = {
+         question: queData.question,
+         ans: '',
+         pid: this.pid,
+         uid: this.uid,
+      };
+      this.afs.collection('products').doc(this.pid).collection('questions').add(qData).then((data) => {
+
+         queData.qid = data.id;
+         this._question.next(queData);
+      });
+      return this._question.asObservable();
+   }
+
+   createOffers(offerData: any) {
+
+      this.afs.collection('offers').ref.add(offerData).then((data) => {
+
+         this.pid = data.id;
+         this._offers.next(offerData);
+      });
+      return this._offers.asObservable();
+   }
+
+   getQue(pid: string) {
+      this.afs.collection('products').doc(pid).collection('questions').ref.get().then((data) => {
+         this._question.next(data);
+         // doc.data() will be undefined in this case
+         console.log('all que', data);
+
+      });
+      return this._question.asObservable();
    }
 
    // ////////////// upload image //////////
@@ -108,6 +150,11 @@ export class ProductService {
       );
    }
 
+   // Writes the file details to the realtime db
+   private saveFileData(upload: Upload) {
+      this.db.list(`${this.imgbasePath}/`).push(upload);
+   }
+
    deleteUpload(upload: any) {
       const name = upload.caption;
       this.deleteFileData(upload.$key)
@@ -118,10 +165,6 @@ export class ProductService {
          })
          .catch((error) => console.log(error));
       return this._productImg.asObservable();
-   }
-   // Writes the file details to the realtime db
-   private saveFileData(upload: Upload) {
-      this.db.list(`${this.imgbasePath}/`).push(upload);
    }
 
    // Writes the file details to the realtime db
@@ -142,12 +185,11 @@ export class ProductService {
       return this.http.get(apiUrl, { headers: this.headers, responseType: 'json' });
    }
 
-   getCurrentLocationProd(location: Geolocation) {
+   getCurrentLocationProd(location: number[]) {
       // tslint:disable-next-line:max-line-length
       const apiUrl = `https://maps.googleapis.com/maps/api/geocode/json?key=AIzaSyAL-QZaz0TObbwMZd_KXqj1Aq7xZ6Ylegc&latlng=${location}&sensor=true`;
       return this.http.get(apiUrl, { headers: this.headers, responseType: 'json' });
    }
-
 
    getUpdatedLocation(address: any) {
       // tslint:disable-next-line:max-line-length

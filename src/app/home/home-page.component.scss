@@ -6,20 +6,18 @@
 }
 
 .sm-img-box {
+        width: 100px;
         border: 1px solid #ccc;
-        padding: 3px;
+        padding: 6px;
         background-color: #fff;
-        height: auto;
-        margin-right: 3px;
-        float: left;
+        height: 100px;
+        margin-right: 6px;
+        float: left; //   background-size: contain;
+        //   background-size: 94px 94px;
+        //   background-repeat: no-repeat;
         img {
-                height: auto;
-        }
-}
-
-.slideshow-container {
-        .caption {
-                font-size: 9px !important;
+                height: 88px;
+                width: 94px;
         }
 }
 

@@ -12,13 +12,14 @@
       <div class="row">
          <div class="col-sm">
             <div class="img-box">
-               <img *ngIf="showNoImg" [src]="'assets/profile/profile-images.jpg'" />
-               <img *ngIf="!showNoImg" [src]="imagem | decode64" (error)="imagem" />
+               <img *ngIf="showNoImg" src="assets/profile/profile-images.jpg" />
+               <img *ngIf="!showNoImg" [src]="imagem" (error)="updateUrlOnErr($event)" />
             </div>
             <div class="custom-file-upload">
                <span class="btn btn-default btn-file">
                   Upload Image
-                  <input type="file" class="upload" accept="image/*" (change)="uploadFile($event,imagem)">
+                  <input type="file" class="button" (change)="detectFiles($event)">
+                  <!-- <input type="file" class="upload" accept="image/*" (change)="uploadFile($event,imagem)"> -->
                </span>
             </div>
          </div>
@@ -72,8 +73,8 @@
          </div>
          <div class="col-sm">
             <mat-form-field class="input-full-width">
-               <label for="email">Email</label>
-               <input matInput type="email" id="email" formControlName="email" required>
+               <label for="email3">Email</label>
+               <input matInput type="email3" id="email" formControlName="email" required>
             </mat-form-field>
             <div *ngIf="formErrors.email" class="help is-danger">
                {{ formErrors.email }}

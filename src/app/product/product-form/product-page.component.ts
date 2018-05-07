@@ -11,9 +11,9 @@ import { UploadService } from '../../uploads/shared/upload.service';
 import { Router } from '@angular/router';
 import { } from 'googlemaps';
 import { MapsAPILoader } from '@agm/core';
-
-type UserProfileFields = 'title' | 'desc' | 'location' | 'category' | 'price';
-type FormProfileErrors = { [u in UserProfileFields]: string };
+declare let navigator: any;
+type ProductFields = 'title' | 'desc' | 'location' | 'category' | 'price';
+type FormProfileErrors = { [p in ProductFields]: string };
 // declare let geocoder: any;
 @Component({
    selector: 'product-page',
@@ -54,7 +54,7 @@ export class ProductPageComponent implements OnInit {
    latitude: number;
    longitude: number;
    zoom: number;
-
+   uid: any;
    categories: Array<any> = [];
    selectedCategories: Array<any> = [];
    dropdownSettings: any = {};
@@ -64,7 +64,7 @@ export class ProductPageComponent implements OnInit {
 
    ngOnInit() {
       const newUser: any = JSON.parse(window.localStorage.getItem('user'));
-      const uid = newUser.uid;
+      this.uid = newUser.uid;
       this.getUserLocation();
       this.productForm = this.fb.group({
          'title': ['', Validators.required],
@@ -79,7 +79,7 @@ export class ProductPageComponent implements OnInit {
       // get uploaded images data
       this.uploads = this.productService.getUploads();
       this.uploads.subscribe((data: any) => {
-         console.log('uid  === ', uid);
+         console.log('uid  === ', this.uid);
          console.log('DATA  === ', data);
          this.showSpinner = false;
          for (let i = 0, len = data.length; i < len; i++) {
@@ -88,7 +88,7 @@ export class ProductPageComponent implements OnInit {
                caption: data[i].name,
                $key: data[i].$key,
             };
-            if (data[i].uid === uid) {
+            if (data[i].uid === this.uid) {
                const index = this.imageSources.findIndex((resp) => resp.$key === newdata.$key);
                if (index === -1) {
                   this.imageSources.push(newdata);
@@ -144,18 +144,20 @@ export class ProductPageComponent implements OnInit {
       if (this.productForm.value.location !== '') {
          this.getUpdatedGeoLocation(this.productForm.value.location);
       }
+      const getStatus = this.productForm.value.status;
       const data = {
          categories: this.selectedCategories,
          images: this.imageSources,
          location: [this.latitude, this.longitude],
          price: this.productForm.value.price,
-         status: this.productForm.value.status,
+         status: getStatus,
          text: this.productForm.value.desc,
          title: this.productForm.value.title,
+         userId: this.uid,
       };
-      const status = this.productForm.value.status;
+
       if (this.productForm.valid) {
-         this.productService.createProduct(data).subscribe((resp: any) => {
+         this.productService.createProduct(data).subscribe((resp: product) => {
             console.log('onbservable product data id == ', resp);
             this.productForm.get('category').setValue([]);
             this.productForm.reset({
@@ -168,7 +170,7 @@ export class ProductPageComponent implements OnInit {
             });
             this.getUserLocation();
             this.notify.update('Product updated successfully', 'success');
-            if (status === 'Published') { this.router.navigate(['/product-details', { productId: resp.pid }]); }
+            if (getStatus === 'Published') { this.router.navigate(['/product-details', { productId: resp.pid }]); }
          });
       }
    }
@@ -236,9 +238,20 @@ export class ProductPageComponent implements OnInit {
    }
 
    getUserLocation() {
-      /// locate the user
       if (navigator.geolocation) {
-         navigator.geolocation.getCurrentPosition((position) => {
+         // Add watch
+         const watchId = navigator.geolocation.watchPosition((position: any) => {
+            // do something with position
+            console.log('position in watch === ', position);
+         }, (error: any) => {
+            // do something with error
+            console.log('error in watch === ', error);
+         });
+         console.log('watchId === ', watchId);
+         // Clear watch
+         navigator.geolocation.clearWatch(watchId);
+         /// locate the user
+         navigator.geolocation.getCurrentPosition((position: any) => {
             this.latitude = position.coords.latitude;
             this.longitude = position.coords.longitude;
             console.log('this.latitude: ', this.latitude, ' & this.longitude: ', this.longitude);
@@ -261,10 +274,12 @@ export class ProductPageComponent implements OnInit {
       const $address = address.toString().split(',');
       const $url_encoded = encodeURI($address);
       this.productService.getUpdatedLocation($url_encoded).subscribe((resp: any) => {
-         console.log('current lat and lan ===', resp.results[0].geometry.location.lat);
-         const location = resp.results[0].geometry.location;
-         this.latitude = location.lat;
-         this.longitude = location.lng;
+         if (resp.results) {
+            console.log('current lat and lan ===', resp.results[0].geometry.location.lat);
+            const location = resp.results[0].geometry.location;
+            this.latitude = location.lat;
+            this.longitude = location.lng;
+         }
       });
    }
 

@@ -1,0 +1,16 @@
+<button mat-raised-button color="accent" class="make-offer" (click)="addNewProduct()" style="float: right;">
+   Add new product
+</button>
+<br>
+<br>
+<mat-tab-group [(selectedIndex)]="tabIndex" (selectedIndexChange)="onTabChange($event)">
+   <mat-tab label="Draft">
+      Draft products
+   </mat-tab>
+   <mat-tab label="offered">
+      Offer products
+   </mat-tab>
+   <mat-tab label="Sold">
+      Sold products
+   </mat-tab>
+</mat-tab-group>

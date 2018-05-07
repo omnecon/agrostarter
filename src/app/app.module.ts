@@ -19,6 +19,7 @@ import { UploadModule } from './uploads/shared/upload.module';
 import { UiModule } from './ui/shared/ui.module';
 import { NotesModule } from './notes/notes.module';
 import { MessageModule } from './message/shared/message.module';
+import { HomeModule } from './home/shared/home.module';
 import { ProductModule } from './product/shared/product.module';
 ///// End FireStarter
 
@@ -47,6 +48,7 @@ import { AngularFirestoreModule } from 'angularfire2/firestore';
       SharedModule,
       ItemModule,
       MessageModule,
+      HomeModule,
       ProductModule,
       UploadModule,
       UiModule,
