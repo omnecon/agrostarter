@@ -15,6 +15,8 @@ import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 export class ProductService {
    private headers: HttpHeaders = new HttpHeaders();
    private _product: Subject<any> = new Subject<any>();
+   private _imgUpload: Subject<any> = new Subject<any>();
+   private _allProducts: Subject<any[]> = new Subject<any[]>();
    private _allDraftProducts: Subject<any[]> = new Subject<any[]>();
    private _allPublishProducts: Subject<any[]> = new Subject<any[]>();
    private _allSoldProducts: Subject<any[]> = new Subject<any[]>();
@@ -32,11 +34,41 @@ export class ProductService {
 
    constructor(private afs: AngularFirestore, private db: AngularFireDatabase, private http: HttpClient, private notify: NotifyService) {
       const newUser: any = JSON.parse(window.localStorage.getItem('user'));
-      this.uid = newUser.uid;
-      console.log('this.uid  == ', this.uid);
+      if (newUser) { this.uid = newUser.uid; }
       this.productsCollection = this.afs.collection('products', (ref) => ref.orderBy('status').limit(5));
-      console.log('this.productsCollection  == ', this.productsCollection);
       this.headers.set('Content-Type', 'application/json; charset=utf-8');
+   }
+
+   getAllProduct() {
+      this.productsCollection.ref.where('status', '==', 'published').get().then((snapshot) => {
+         const allProd: any = [];
+         snapshot.forEach((doc) => {
+            if (doc.exists) {
+               const singleProd = doc.data();
+               singleProd.pid = doc.id;
+               this.afs.collection('users').doc(singleProd.userId)
+                  .ref
+                  .get().then((userDoc) => {
+                     if (userDoc.exists) {
+                        const user = userDoc.data();
+                        singleProd.photoURL = user.photoURL;
+                        singleProd.firstName = user.firstName;
+                        singleProd.lastName = user.lastName;
+                     } else {
+                        // doc.data() will be undefined in this case
+                        console.log('No such document!');
+                     }
+                     allProd.push(singleProd);
+                  });
+
+            } else {
+               // doc.data() will be undefined in this case
+               console.log('No such document!');
+            }
+            this._allProducts.next(allProd);
+         });
+      }).catch((error) => this.handleError(error));
+      return this._allProducts.asObservable();
    }
 
    getAllDraftProduct() {
@@ -52,7 +84,7 @@ export class ProductService {
                console.log('No such document!');
             }
             this._allDraftProducts.next(allProd);
-            // console.log('test %%%%%%%%%%% ', allProd);
+
          });
       }).catch((error) => this.handleError(error));
       return this._allDraftProducts.asObservable();
@@ -71,7 +103,7 @@ export class ProductService {
                console.log('No such document!');
             }
             this._allPublishProducts.next(allProd);
-            // console.log('test %%%%%%%%%%% ', allProd);
+
          });
       }).catch((error) => this.handleError(error));
       return this._allPublishProducts.asObservable();
@@ -90,7 +122,7 @@ export class ProductService {
                console.log('No such document!');
             }
             this._allSoldProducts.next(allProd);
-            // console.log('test %%%%%%%%%%% ', allProd);
+
          });
       }).catch((error) => this.handleError(error));
       return this._allSoldProducts.asObservable();
@@ -125,21 +157,19 @@ export class ProductService {
    createProduct(productData: product) {
       this.productsCollection.add(productData).then((data) => {
          productData.pid = data.id;
-         this.pid = data.id;
          this._product.next(productData);
       }).catch((error) => this.handleError(error));
       return this._product.asObservable();
    }
 
    createQue(queData: any) {
-      this.pid = queData.pid;
       const qData = {
          question: queData.question,
          ans: '',
-         pid: this.pid,
+         pid: queData.pid,
          uid: this.uid,
       };
-      this.afs.collection('products').doc(this.pid).collection('questions').add(qData).then((data) => {
+      this.afs.collection('products').doc(queData.pid).collection('questions').add(qData).then((data) => {
          queData.qid = data.id;
          this._question.next(queData);
       }).catch((error) => this.handleError(error));
@@ -148,7 +178,6 @@ export class ProductService {
 
    createOffers(offerData: any) {
       this.afs.collection('offers').ref.add(offerData).then((data) => {
-         this.pid = data.id;
          this._offers.next(offerData);
       }).catch((error) => this.handleError(error));
       return this._offers.asObservable();
@@ -158,7 +187,7 @@ export class ProductService {
       this.afs.collection('products').doc(pid).collection('questions').ref.get().then((data) => {
          this._question.next(data);
          // doc.data() will be undefined in this case
-         console.log('all que', data);
+         // console.log('all que', data);
 
       }).catch((error) => this.handleError(error));
       return this._question.asObservable();
@@ -200,6 +229,7 @@ export class ProductService {
                upload.url = uploadTask.snapshot.downloadURL;
                upload.name = filename;
                upload.uid = this.uid;
+
                this.saveFileData(upload);
                return;
             } else {
@@ -207,11 +237,15 @@ export class ProductService {
             }
          },
       );
+      return this._imgUpload.asObservable();
    }
 
    // Writes the file details to the realtime db
    private saveFileData(upload: Upload) {
-      this.db.list(`${this.imgbasePath}/`).push(upload);
+      return this.db.list(`${this.imgbasePath}/`).push(upload).then((data) => {
+         upload.$key = data.key;
+         this._imgUpload.next(upload);
+      });
    }
 
    deleteUpload(upload: any) {

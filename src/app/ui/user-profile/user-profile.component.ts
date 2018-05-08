@@ -171,20 +171,6 @@ export class UserProfileComponent implements OnInit {
       }
    }
 
-   uploadFile(event: any, midia: any) {
-      const file = event.target.files[0];
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => {
-         this.pic = reader.result;
-         this.imagem = btoa(reader.result);
-         this.showNoImg = false;
-      };
-      reader.onerror = (error) => {
-         console.log('Erro ao ler a imagem : ', error);
-      };
-   }
-
    detectFiles($event: Event) {
       this.selectedFiles = ($event.target as HTMLInputElement).files;
       const file = this.selectedFiles;

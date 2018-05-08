@@ -1,3 +1,4 @@
+import { take } from 'rxjs/operators';
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { ReactiveFormsModule, FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -133,10 +134,10 @@ export class ProductDetailsComponent implements OnInit {
       // Add watch
       const watchId = navigator.geolocation.watchPosition((position: any) => {
          // do something with position
-         console.log('position in geolocation watch === ', position);
+         // console.log('position in geolocation watch === ', position);
       }, (error: any) => {
          // do something with error
-         console.log('error in  geolocationwatch === ', error);
+         // console.log('error in  geolocationwatch === ', error);
       });
       // Clear watch
       navigator.geolocation.clearWatch(watchId);
@@ -147,7 +148,6 @@ export class ProductDetailsComponent implements OnInit {
    }
 
    addQuestion() {
-      console.log('Add Question');
       const data = {
          question: this.questionsForm.value.que,
          ans: '',
@@ -155,24 +155,19 @@ export class ProductDetailsComponent implements OnInit {
       };
 
       if (this.questionsForm.valid) {
-         this.productService.createQue(data).subscribe((resp: any) => {
-            // this.question.push(resp);
+         const questionSubscription = this.productService.createQue(data).subscribe((resp: any) => {
             const question = {
-               photoURL: this.currentUser.photoURL,
-               firstName: this.currentUser.firstName,
-               lastName: this.currentUser.lastName,
                question: resp.question,
-               answer: resp.ans,
+               ans: resp.ans,
             };
-            this.questionsBy.push(question);
-
-            this.questionsForm.reset({
-               'que': [''],
-            });
-            this.notify.update('Question added successfully', 'success');
+            this.getQueUserDetails(this.uid, question);
+            this.questionsForm.reset();
+            questionSubscription.unsubscribe();
          });
       }
+
    }
+
    getQuestions() {
       this.productService.getQue(this.productId).subscribe((resp: any) => {
          if (resp.docs && resp.docs.length > 0) {
@@ -185,7 +180,6 @@ export class ProductDetailsComponent implements OnInit {
    }
 
    addOffer() {
-      console.log('Add Offer');
       const data = {
          text: this.offersForm.value.desc,
          price: this.offersForm.value.price,
@@ -197,19 +191,9 @@ export class ProductDetailsComponent implements OnInit {
       };
 
       if (this.offersForm.valid) {
-         this.productService.createOffers(data).subscribe((resp: any) => {
-            const offer = {
-               photoURL: this.currentUser.photoURL,
-               firstName: this.currentUser.firstName,
-               lastName: this.currentUser.lastName,
-            };
-            this.offersBy.push(offer);
-
-            this.offersForm.reset({
-               'price': [''],
-               'desc': [''],
-            });
-            this.notify.update('Offer added successfully', 'success');
+         const offerSubscription = this.productService.createOffers(data).subscribe((resp: any) => {
+            this.offersForm.reset();
+            offerSubscription.unsubscribe();
          });
       }
    }
@@ -239,6 +223,7 @@ export class ProductDetailsComponent implements OnInit {
                // doc.data() will be undefined in this case
                console.log('No such document!');
             }
+
          });
    }
 
@@ -255,4 +240,9 @@ export class ProductDetailsComponent implements OnInit {
             }
          });
    }
+
+   scroll(el: any) {
+      el.scrollIntoView({ behavior: 'smooth' });
+   }
+
 }

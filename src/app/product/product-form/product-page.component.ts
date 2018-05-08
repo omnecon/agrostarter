@@ -76,24 +76,6 @@ export class ProductPageComponent implements OnInit {
       });
       this.productForm.valueChanges.subscribe((data) => this.onValueChanged(data));
       this.onValueChanged();
-      // get uploaded images data
-      this.uploads = this.productService.getUploads();
-      this.uploads.subscribe((data: any) => {
-         this.showSpinner = false;
-         for (let i = 0, len = data.length; i < len; i++) {
-            const newdata = {
-               url: data[i].url,
-               caption: data[i].name,
-               $key: data[i].$key,
-            };
-            if (data[i].uid === this.uid) {
-               const index = this.imageSources.findIndex((resp) => resp.$key === newdata.$key);
-               if (index === -1) {
-                  this.imageSources.push(newdata);
-               }
-            }
-         }
-      });
 
       this.categories = [
          { cat_id: 'food', cat_text: 'Food' },
@@ -137,7 +119,6 @@ export class ProductPageComponent implements OnInit {
    }
 
    addProduct() {
-      console.log('addProduct');
       if (this.productForm.value.location !== '') {
          this.getUpdatedGeoLocation(this.productForm.value.location);
       }
@@ -215,7 +196,17 @@ export class ProductPageComponent implements OnInit {
       Array.from(files).forEach((file) => {
          this.currentUpload = new Upload(file);
          this.totalImgUpload = this.totalImgUpload - 1;
-         this.productService.pushUpload(this.currentUpload);
+         this.productService.pushUpload(this.currentUpload).subscribe((imageData) => {
+            const newdata = {
+               url: imageData.url,
+               caption: imageData.name,
+               $key: imageData.$key,
+            };
+            const index = this.imageSources.findIndex((resp) => resp.$key === newdata.$key);
+            if (index === -1) {
+               this.imageSources.push(newdata);
+            }
+         });
       });
    }
 
@@ -244,10 +235,10 @@ export class ProductPageComponent implements OnInit {
          // Add watch
          const watchId = navigator.geolocation.watchPosition((position: any) => {
             // do something with position
-            console.log('position in watch === ', position);
+            // console.log('position in watch === ', position);
          }, (error: any) => {
             // do something with error
-            console.log('error in watch === ', error);
+            // console.log('error in watch === ', error);
          });
 
          // Clear watch
