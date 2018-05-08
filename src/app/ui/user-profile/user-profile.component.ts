@@ -167,6 +167,7 @@ export class UserProfileComponent implements OnInit {
          };
 
          this.userDoc.update(data);
+         window.scroll(0, 0);
       }
    }
 

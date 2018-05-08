@@ -8,7 +8,7 @@
       <div class="img-box" style="position: relative">
          <slideshow [minHeight]="'200px'" [autoPlay]="true" [showArrows]="true" [imageUrls]="imageSources" [lazyLoad]="imageSources?.length > 1" [autoPlayWaitForLazyLoad]="true" *ngIf="imageSources?.length >= 1" #slideshow (onSwipeLeft)="getIndex($event)" (onSwipeLeft)="getIndex($event)" (onSlideLeft)="getIndex($event)" (onSlideRight)="getIndex($event)">
          </slideshow>
-         <button mat-raised-button color="accent" class="btn btn-lg" style="z-index:1000;position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); -ms-transform: translate(-50%, -50%);" (click)="deleteProductImg()" *ngIf="imageSources?.length > 0">delete</button>
+         <button mat-raised-button color="accent" class="btn btn-lg" style="z-index:1000;position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); -ms-transform: translate(-50%, -50%);" (click)="deleteProductImg()" *ngIf="imageSources?.length > 0">Delete</button>
          <div *ngIf="imageSources?.length <= 0" class="no-img">No Images are available</div>
       </div>
       <div class="img-drag-drop">

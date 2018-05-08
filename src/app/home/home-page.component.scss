@@ -35,3 +35,27 @@
                 width: 44px;
         }
 }
+
+.user-header-image {
+        background-image: url('https://material.angular.io/assets/img/examples/shiba1.jpg');
+        background-size: cover;
+}
+
+.prod-card {
+        width: 100%;
+        .prod-card-item {
+                width: 25%;
+                float: left;
+                margin: 10px;
+                padding: 10px;
+        }
+        .mat-card-image {
+                margin: 0 0 5px 0;
+        }
+        .mat-card-title {
+                margin-bottom: 6px;
+        }
+        .mat-card-subtitle {
+                margin-bottom: 6px;
+        }
+}

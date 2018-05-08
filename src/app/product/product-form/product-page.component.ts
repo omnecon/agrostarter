@@ -79,8 +79,6 @@ export class ProductPageComponent implements OnInit {
       // get uploaded images data
       this.uploads = this.productService.getUploads();
       this.uploads.subscribe((data: any) => {
-         console.log('uid  === ', this.uid);
-         console.log('DATA  === ', data);
          this.showSpinner = false;
          for (let i = 0, len = data.length; i < len; i++) {
             const newdata = {
@@ -95,7 +93,6 @@ export class ProductPageComponent implements OnInit {
                }
             }
          }
-         console.log('this.imageSources  ', this.imageSources);
       });
 
       this.categories = [
@@ -158,7 +155,6 @@ export class ProductPageComponent implements OnInit {
 
       if (this.productForm.valid) {
          this.productService.createProduct(data).subscribe((resp: product) => {
-            console.log('onbservable product data id == ', resp);
             window.scroll(0, 0);
             this.productForm.get('category').setValue([]);
             this.productForm.get('category').patchValue([]);
@@ -224,7 +220,6 @@ export class ProductPageComponent implements OnInit {
    }
 
    deleteProductImg() {
-      console.log('event  === ', this.currentProductData);
       const userChoice = confirm('Are you sure you want to permanently delete this product image?');
       if (userChoice) {
          const index = this.imageSources.findIndex((data) => data.$key === this.currentProductData.$key);
@@ -254,14 +249,13 @@ export class ProductPageComponent implements OnInit {
             // do something with error
             console.log('error in watch === ', error);
          });
-         console.log('watchId === ', watchId);
+
          // Clear watch
          navigator.geolocation.clearWatch(watchId);
          /// locate the user
          navigator.geolocation.getCurrentPosition((position: any) => {
             this.latitude = position.coords.latitude;
             this.longitude = position.coords.longitude;
-            console.log('this.latitude: ', this.latitude, ' & this.longitude: ', this.longitude);
             this.getGeoLocation();
          });
       }
@@ -270,8 +264,6 @@ export class ProductPageComponent implements OnInit {
    getGeoLocation() {
       this.productService.getCurrentLocation(this.latitude, this.longitude).subscribe((resp) => {
          const address = resp.results[1].formatted_address;
-         console.log('current location ===', address);
-         console.log('resp ===', resp);
          this.productForm.get('location').setValue([address]);
          this.getUpdatedGeoLocation(address);
       });
@@ -282,7 +274,6 @@ export class ProductPageComponent implements OnInit {
       const $url_encoded = encodeURI($address);
       this.productService.getUpdatedLocation($url_encoded).subscribe((resp: any) => {
          if (resp.results) {
-            console.log('current lat and lan ===', resp.results[0].geometry.location.lat);
             const location = resp.results[0].geometry.location;
             this.latitude = location.lat;
             this.longitude = location.lng;

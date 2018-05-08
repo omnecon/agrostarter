@@ -15,7 +15,6 @@ export class UserProductComponent implements OnInit {
    allSoldProduct: any = [];
    constructor(private router: Router, private productService: ProductService) { }
    ngOnInit() {
-      this.tabIndex = 0;
       this.getAllDraftProduct();
       this.getAllPublishProduct();
       this.getAllSoldProduct();
@@ -37,8 +36,18 @@ export class UserProductComponent implements OnInit {
    }
    onTabChange(index: any) {
       this.tabIndex = index;
+      // if (index === 0) {
+      //    this.getAllDraftProduct();
+      // } else if (index === 1) {
+      //    this.getAllPublishProduct();
+      // } else {
+      //    this.getAllSoldProduct();
+      // }
    }
    addNewProduct() {
       this.router.navigate(['/product']);
+   }
+   openProductDetailPage(pid: any) {
+      this.router.navigate(['/product-details', { productId: pid }]);
    }
 }

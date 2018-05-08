@@ -63,15 +63,16 @@ export class ProductDetailsComponent implements OnInit {
          'price': ['', Validators.required],
       });
       this.questionsForm.valueChanges.subscribe((data) => this.onValueChanged(data, 'question'));
-      this.questionsForm.valueChanges.subscribe((data) => this.onValueChanged(data, 'offer'));
+      this.offersForm.valueChanges.subscribe((data) => this.onValueChanged(data, 'offer'));
       // this.onValueChanged();
       this.productId = this.route.snapshot.paramMap.get('productId');
 
       if (this.productId) {
          this.getProduct();
          this.getQuestions();
+         this.getOffers();
       }
-      this.getOffers();
+
    }
 
    // tslint:disable-next-line:cyclomatic-complexity
@@ -137,7 +138,6 @@ export class ProductDetailsComponent implements OnInit {
          // do something with error
          console.log('error in  geolocationwatch === ', error);
       });
-      console.log('watchId === ', watchId);
       // Clear watch
       navigator.geolocation.clearWatch(watchId);
       this.productService.getCurrentLocationProd(location).subscribe((resp: any) => {
@@ -156,7 +156,6 @@ export class ProductDetailsComponent implements OnInit {
 
       if (this.questionsForm.valid) {
          this.productService.createQue(data).subscribe((resp: any) => {
-            console.log('onbservable que &&&&&&&&&&', resp);
             // this.question.push(resp);
             const question = {
                photoURL: this.currentUser.photoURL,
@@ -179,11 +178,8 @@ export class ProductDetailsComponent implements OnInit {
          if (resp.docs && resp.docs.length > 0) {
             for (let i = 0, len = resp.docs.length; i < len; i++) {
                const que = resp.docs[i].data();
-               console.log('Que resp  ===', resp.docs[i].data());
-               console.log('Que   ===', que);
                this.getQueUserDetails(que.uid, que);
             }
-            console.log(' this.question  === ', this.question);
          }
       });
    }
@@ -202,8 +198,6 @@ export class ProductDetailsComponent implements OnInit {
 
       if (this.offersForm.valid) {
          this.productService.createOffers(data).subscribe((resp: any) => {
-            console.log('onbservable offers &&&&&&&&&&', resp);
-            // this.question.push(resp);
             const offer = {
                photoURL: this.currentUser.photoURL,
                firstName: this.currentUser.firstName,
@@ -223,7 +217,6 @@ export class ProductDetailsComponent implements OnInit {
    getOffers() {
       this.productService.getOffers().subscribe((resp: any) => {
          this.Offers = resp;
-         console.log('this.Offers = ', this.Offers);
          this.getOfferUserDetails(this.Offers.userId);
       });
    }
@@ -234,7 +227,6 @@ export class ProductDetailsComponent implements OnInit {
          .get().then((doc) => {
             if (doc.exists) {
                this.user = doc.data();
-               console.log('user == ', this.user);
                const data = {
                   photoURL: this.user.photoURL,
                   firstName: this.user.firstName,
@@ -243,7 +235,6 @@ export class ProductDetailsComponent implements OnInit {
                   answer: que.ans,
                };
                this.questionsBy.push(data);
-               console.log('this.questionsBy  ', this.questionsBy);
             } else {
                // doc.data() will be undefined in this case
                console.log('No such document!');
@@ -257,7 +248,6 @@ export class ProductDetailsComponent implements OnInit {
          .get().then((doc) => {
             if (doc.exists) {
                this.user = doc.data();
-               console.log('user == ', this.user);
                this.offersBy.push(this.user);
             } else {
                // doc.data() will be undefined in this case

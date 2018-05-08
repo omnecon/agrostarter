@@ -6,7 +6,7 @@
 <mat-tab-group [(selectedIndex)]="tabIndex" (selectedIndexChange)="onTabChange($event)">
    <mat-tab label="Draft">
       <div *ngIf="allDraftProduct?.length > 0; else noDraftProd">
-         <div *ngFor="let draft of allDraftProduct" class="row prod-list">
+         <div *ngFor="let draft of allDraftProduct;let i = index" class="row prod-list" (click)="openProductDetailPage(draft.pid)">
             <div class="col-3">
                <img [src]="draft.images[0].url" class="sm-img-box" onError="this.src='assets/images/no_image_available.jpeg';">
             </div>
@@ -17,9 +17,11 @@
                <strong>Price: {{draft.price | currency:'EUR':true}}</strong>
                <br>
                <strong>Categories: </strong>
-               <span *ngFor="let catgory of draft.categories">
+               <div *ngFor="let catgory of draft.categories;let i= index">
                   {{catgory.cat_text}}
-               </span>
+                  <span *ngIf="(i<(draft.categories?.length-1))">,
+                  </span>
+               </div>
             </div>
          </div>
       </div>
@@ -30,7 +32,7 @@
    </mat-tab>
    <mat-tab label="offered">
       <div *ngIf="allPublishProduct?.length > 0; else noPublishProd">
-         <div *ngFor="let publish of allPublishProduct" class="row prod-list">
+         <div *ngFor="let publish of allPublishProduct" class="row prod-list" (click)="openProductDetailPage(publish.pid)">
             <div class="col-3">
                <img [src]="publish.images[0].url" class="sm-img-box" (error)="this.src='assets/profile/profile-images.jpg'">
             </div>
@@ -41,9 +43,10 @@
                <strong>Price: {{publish.price | currency:'EUR':true}}</strong>
                <br>
                <strong>Categories: </strong>
-               <span *ngFor="let catgory of publish.categories">
+               <div *ngFor="let catgory of publish.categories;let i= index">
                   {{catgory.cat_text}}
-               </span>
+                  <span *ngIf="(i<(publish.categories?.length-1))">,</span>
+               </div>
             </div>
          </div>
       </div>
@@ -54,7 +57,7 @@
    </mat-tab>
    <mat-tab label="Sold">
       <div *ngIf="allSoldProduct?.length > 0; else noSoldProd">
-         <div *ngFor="let sold of allSoldProduct" class="row prod-list">
+         <div *ngFor="let sold of allSoldProduct" class="row prod-list" (click)="openProductDetailPage(sold.pid)">
             <div class="col-3">
                <img [src]="sold.images[0].url" class="sm-img-box" (error)="this.src='assets/profile/profile-images.jpg'">
             </div>
@@ -65,9 +68,10 @@
                <strong>Price: {{sold.price | currency:'EUR':true}}</strong>
                <br>
                <strong>Categories: </strong>
-               <span *ngFor="let catgory of sold.categories">
+               <div *ngFor="let catgory of sold.categories;let i= index">
                   {{catgory.cat_text}}
-               </span>
+                  <span *ngIf="(i<(sold.categories?.length-1))">,</span>
+               </div>
             </div>
          </div>
       </div>

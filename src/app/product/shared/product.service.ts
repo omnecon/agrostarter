@@ -40,11 +40,12 @@ export class ProductService {
    }
 
    getAllDraftProduct() {
-      const data = this.productsCollection.ref.where('userId', '==', this.uid).where('status', '==', 'default').get().then((snapshot) => {
+      this.productsCollection.ref.where('userId', '==', this.uid).where('status', '==', 'default').get().then((snapshot) => {
          const allProd: any = [];
          snapshot.forEach((doc) => {
             if (doc.exists) {
                const singleProd = doc.data();
+               singleProd.pid = doc.id;
                allProd.push(singleProd);
             } else {
                // doc.data() will be undefined in this case
@@ -58,11 +59,12 @@ export class ProductService {
    }
 
    getAllPublishProduct() {
-      const data = this.productsCollection.ref.where('userId', '==', this.uid).where('status', '==', 'published').get().then((snapshot) => {
+      this.productsCollection.ref.where('userId', '==', this.uid).where('status', '==', 'published').get().then((snapshot) => {
          const allProd: any = [];
          snapshot.forEach((doc) => {
             if (doc.exists) {
                const singleProd = doc.data();
+               singleProd.pid = doc.id;
                allProd.push(singleProd);
             } else {
                // doc.data() will be undefined in this case
@@ -76,11 +78,12 @@ export class ProductService {
    }
 
    getAllSoldProduct() {
-      const data = this.productsCollection.ref.where('userId', '==', this.uid).where('status', '==', 'sold').get().then((snapshot) => {
+      this.productsCollection.ref.where('userId', '==', this.uid).where('status', '==', 'sold').get().then((snapshot) => {
          const allProd: any = [];
          snapshot.forEach((doc) => {
             if (doc.exists) {
                const singleProd = doc.data();
+               singleProd.pid = doc.id;
                allProd.push(singleProd);
             } else {
                // doc.data() will be undefined in this case
@@ -144,9 +147,7 @@ export class ProductService {
    }
 
    createOffers(offerData: any) {
-
       this.afs.collection('offers').ref.add(offerData).then((data) => {
-
          this.pid = data.id;
          this._offers.next(offerData);
       }).catch((error) => this.handleError(error));
