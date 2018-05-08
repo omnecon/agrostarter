@@ -1,8 +1,9 @@
-import { Injectable } from '@angular/core';
+import { Injectable, OnInit } from '@angular/core';
 
 import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument } from 'angularfire2/firestore';
 import { Upload } from './upload';
 import { AngularFireDatabase, AngularFireList } from 'angularfire2/database';
+import { AuthService } from '../../core/auth.service';
 import { product } from './product';
 import { NotifyService } from '../../core/notify.service';
 import * as firebase from 'firebase';
@@ -32,11 +33,13 @@ export class ProductService {
    productsCollection: AngularFirestoreCollection<product>;
    productsDocument: AngularFirestoreDocument<product>;
 
-   constructor(private afs: AngularFirestore, private db: AngularFireDatabase, private http: HttpClient, private notify: NotifyService) {
-      const newUser: any = JSON.parse(window.localStorage.getItem('user'));
-      if (newUser) { this.uid = newUser.uid; }
+   // tslint:disable-next-line:max-line-length
+   constructor(private auth: AuthService, private afs: AngularFirestore, private db: AngularFireDatabase, private http: HttpClient, private notify: NotifyService) {
       this.productsCollection = this.afs.collection('products', (ref) => ref.orderBy('status').limit(5));
       this.headers.set('Content-Type', 'application/json; charset=utf-8');
+      const newUser: any = JSON.parse(window.localStorage.getItem('user'));
+      // if (newUser) { this.auth.currentUser.uid = newUser.uid; }
+      console.log('newUser = ', newUser);
    }
 
    getAllProduct() {
@@ -72,7 +75,9 @@ export class ProductService {
    }
 
    getAllDraftProduct() {
-      this.productsCollection.ref.where('userId', '==', this.uid).where('status', '==', 'default').get().then((snapshot) => {
+      console.log('this.auth.currentUser.uid  ', this.auth.currentUser.uid);
+      // tslint:disable-next-line:max-line-length
+      this.productsCollection.ref.where('userId', '==', this.auth.currentUser.uid).where('status', '==', 'default').get().then((snapshot) => {
          const allProd: any = [];
          snapshot.forEach((doc) => {
             if (doc.exists) {
@@ -91,7 +96,8 @@ export class ProductService {
    }
 
    getAllPublishProduct() {
-      this.productsCollection.ref.where('userId', '==', this.uid).where('status', '==', 'published').get().then((snapshot) => {
+      // tslint:disable-next-line:max-line-length
+      this.productsCollection.ref.where('userId', '==', this.auth.currentUser.uid).where('status', '==', 'published').get().then((snapshot) => {
          const allProd: any = [];
          snapshot.forEach((doc) => {
             if (doc.exists) {
@@ -110,7 +116,7 @@ export class ProductService {
    }
 
    getAllSoldProduct() {
-      this.productsCollection.ref.where('userId', '==', this.uid).where('status', '==', 'sold').get().then((snapshot) => {
+      this.productsCollection.ref.where('userId', '==', this.auth.currentUser.uid).where('status', '==', 'sold').get().then((snapshot) => {
          const allProd: any = [];
          snapshot.forEach((doc) => {
             if (doc.exists) {
@@ -141,7 +147,7 @@ export class ProductService {
    }
 
    getOffers() {
-      this.afs.collection('offers', (ref) => ref.where('userId', '==', this.uid)).ref.get().then((snapshot) => {
+      this.afs.collection('offers', (ref) => ref.where('userId', '==', this.auth.currentUser.uid)).ref.get().then((snapshot) => {
          snapshot.forEach((doc) => {
             if (doc.exists) {
                this._offers.next(doc.data());
@@ -167,7 +173,7 @@ export class ProductService {
          question: queData.question,
          ans: '',
          pid: queData.pid,
-         uid: this.uid,
+         uid: this.auth.currentUser.uid,
       };
       this.afs.collection('products').doc(queData.pid).collection('questions').add(qData).then((data) => {
          queData.qid = data.id;
@@ -210,7 +216,7 @@ export class ProductService {
       const storageRef = firebase.storage().ref();
       const ext = upload.file.name.split('.').pop();
       const timestamp = new Date().getTime().toString();
-      const filename = `agruno_${this.uid}_${timestamp}.${ext}`;
+      const filename = `agruno_${this.auth.currentUser.uid}_${timestamp}.${ext}`;
       const uploadTask = storageRef.child(`${this.imgbasePath}/${filename}`).put(upload.file);
 
       uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED,
@@ -228,7 +234,7 @@ export class ProductService {
             if (uploadTask.snapshot.downloadURL) {
                upload.url = uploadTask.snapshot.downloadURL;
                upload.name = filename;
-               upload.uid = this.uid;
+               upload.uid = this.auth.currentUser.uid;
 
                this.saveFileData(upload);
                return;

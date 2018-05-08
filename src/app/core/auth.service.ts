@@ -16,6 +16,7 @@ export class AuthService {
       url: ``,
       handleCodeInApp: false,
    };
+   currentUser: any;
    user: Observable<User | null>;
    private userDoc: AngularFirestoreDocument<User>;
    accessToken = '';
@@ -152,8 +153,8 @@ export class AuthService {
       const data = {
          uid: user.uid,
       };
+      this.currentUser = data;
       window.localStorage.setItem('user', JSON.stringify(user));
-      const test: any = JSON.parse(window.localStorage.getItem('user'));
       return userRef.set(data, { merge: true });
    }
 
@@ -183,8 +184,8 @@ export class AuthService {
       if (newUser) {
          data.agbAcceptedDate = new Date();
       }
+      this.currentUser = data;
       window.localStorage.setItem('user', JSON.stringify(data));
-      const test: any = JSON.parse(window.localStorage.getItem('user'));
       return userRef.set(data);
    }
 }
