@@ -4,7 +4,7 @@ import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument 
 import { Upload } from './upload';
 import { AngularFireDatabase, AngularFireList } from 'angularfire2/database';
 import { product } from './product';
-
+import { NotifyService } from '../../core/notify.service';
 import * as firebase from 'firebase';
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
@@ -15,6 +15,9 @@ import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 export class ProductService {
    private headers: HttpHeaders = new HttpHeaders();
    private _product: Subject<any> = new Subject<any>();
+   private _allDraftProducts: Subject<any[]> = new Subject<any[]>();
+   private _allPublishProducts: Subject<any[]> = new Subject<any[]>();
+   private _allSoldProducts: Subject<any[]> = new Subject<any[]>();
    private _question: Subject<any> = new Subject<any>();
    private _offers: Subject<any> = new Subject<any>();
    private _productImg: Subject<any> = new Subject<any>();
@@ -27,11 +30,67 @@ export class ProductService {
    productsCollection: AngularFirestoreCollection<product>;
    productsDocument: AngularFirestoreDocument<product>;
 
-   constructor(private afs: AngularFirestore, private db: AngularFireDatabase, private http: HttpClient) {
+   constructor(private afs: AngularFirestore, private db: AngularFireDatabase, private http: HttpClient, private notify: NotifyService) {
       const newUser: any = JSON.parse(window.localStorage.getItem('user'));
       this.uid = newUser.uid;
+      console.log('this.uid  == ', this.uid);
       this.productsCollection = this.afs.collection('products', (ref) => ref.orderBy('status').limit(5));
+      console.log('this.productsCollection  == ', this.productsCollection);
       this.headers.set('Content-Type', 'application/json; charset=utf-8');
+   }
+
+   getAllDraftProduct() {
+      const data = this.productsCollection.ref.where('userId', '==', this.uid).where('status', '==', 'default').get().then((snapshot) => {
+         const allProd: any = [];
+         snapshot.forEach((doc) => {
+            if (doc.exists) {
+               const singleProd = doc.data();
+               allProd.push(singleProd);
+            } else {
+               // doc.data() will be undefined in this case
+               console.log('No such document!');
+            }
+            this._allDraftProducts.next(allProd);
+            // console.log('test %%%%%%%%%%% ', allProd);
+         });
+      }).catch((error) => this.handleError(error));
+      return this._allDraftProducts.asObservable();
+   }
+
+   getAllPublishProduct() {
+      const data = this.productsCollection.ref.where('userId', '==', this.uid).where('status', '==', 'published').get().then((snapshot) => {
+         const allProd: any = [];
+         snapshot.forEach((doc) => {
+            if (doc.exists) {
+               const singleProd = doc.data();
+               allProd.push(singleProd);
+            } else {
+               // doc.data() will be undefined in this case
+               console.log('No such document!');
+            }
+            this._allPublishProducts.next(allProd);
+            // console.log('test %%%%%%%%%%% ', allProd);
+         });
+      }).catch((error) => this.handleError(error));
+      return this._allPublishProducts.asObservable();
+   }
+
+   getAllSoldProduct() {
+      const data = this.productsCollection.ref.where('userId', '==', this.uid).where('status', '==', 'sold').get().then((snapshot) => {
+         const allProd: any = [];
+         snapshot.forEach((doc) => {
+            if (doc.exists) {
+               const singleProd = doc.data();
+               allProd.push(singleProd);
+            } else {
+               // doc.data() will be undefined in this case
+               console.log('No such document!');
+            }
+            this._allSoldProducts.next(allProd);
+            // console.log('test %%%%%%%%%%% ', allProd);
+         });
+      }).catch((error) => this.handleError(error));
+      return this._allSoldProducts.asObservable();
    }
 
    getProduct(id: string) {
@@ -42,7 +101,7 @@ export class ProductService {
             // doc.data() will be undefined in this case
             console.log('No such document!');
          }
-      });
+      }).catch((error) => this.handleError(error));
       return this._product.asObservable();
    }
 
@@ -56,7 +115,7 @@ export class ProductService {
                console.log('No such document!');
             }
          });
-      });
+      }).catch((error) => this.handleError(error));
       return this._offers.asObservable();
    }
 
@@ -65,7 +124,7 @@ export class ProductService {
          productData.pid = data.id;
          this.pid = data.id;
          this._product.next(productData);
-      });
+      }).catch((error) => this.handleError(error));
       return this._product.asObservable();
    }
 
@@ -78,10 +137,9 @@ export class ProductService {
          uid: this.uid,
       };
       this.afs.collection('products').doc(this.pid).collection('questions').add(qData).then((data) => {
-
          queData.qid = data.id;
          this._question.next(queData);
-      });
+      }).catch((error) => this.handleError(error));
       return this._question.asObservable();
    }
 
@@ -91,7 +149,7 @@ export class ProductService {
 
          this.pid = data.id;
          this._offers.next(offerData);
-      });
+      }).catch((error) => this.handleError(error));
       return this._offers.asObservable();
    }
 
@@ -101,7 +159,7 @@ export class ProductService {
          // doc.data() will be undefined in this case
          console.log('all que', data);
 
-      });
+      }).catch((error) => this.handleError(error));
       return this._question.asObservable();
    }
 
@@ -162,8 +220,7 @@ export class ProductService {
             this.deleteFileStorage(name).then(() => {
                this._productImg.next();
             });
-         })
-         .catch((error) => console.log(error));
+         }).catch((error) => this.handleError(error));
       return this._productImg.asObservable();
    }
 
@@ -197,4 +254,9 @@ export class ProductService {
       return this.http.get(apiUrl, { headers: this.headers, responseType: 'json' });
    }
 
+   // If error, console log and notify user
+   private handleError(error: Error) {
+      console.error(error);
+      this.notify.update(error.message, 'error');
+   }
 }

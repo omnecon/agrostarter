@@ -140,7 +140,7 @@ export class ProductPageComponent implements OnInit {
    }
 
    addProduct() {
-      console.log('addProduct', (this.productForm.value.location !== ''));
+      console.log('addProduct');
       if (this.productForm.value.location !== '') {
          this.getUpdatedGeoLocation(this.productForm.value.location);
       }
@@ -159,18 +159,26 @@ export class ProductPageComponent implements OnInit {
       if (this.productForm.valid) {
          this.productService.createProduct(data).subscribe((resp: product) => {
             console.log('onbservable product data id == ', resp);
+            window.scroll(0, 0);
             this.productForm.get('category').setValue([]);
+            this.productForm.get('category').patchValue([]);
+            this.selectedCategories = [];
             this.productForm.reset({
                'title': [''],
                'desc': [''],
                'location': [''],
-               'category': [''],
+               'category': [],
                'price': [''],
                'status': ['default'],
             });
             this.getUserLocation();
+
             this.notify.update('Product updated successfully', 'success');
-            if (getStatus === 'Published') { this.router.navigate(['/product-details', { productId: resp.pid }]); }
+            if (getStatus === 'published') {
+               this.router.navigate(['/product-details', { productId: resp.pid }]);
+            } else {
+               this.router.navigate(['/user-product']);
+            }
          });
       }
    }
@@ -224,7 +232,6 @@ export class ProductPageComponent implements OnInit {
             if (index > -1) {
                this.imageSources.splice(index, 1);
                this._slideshow.setSlideIndex(0);
-
             }
          });
       } else {
@@ -282,5 +289,4 @@ export class ProductPageComponent implements OnInit {
          }
       });
    }
-
 }

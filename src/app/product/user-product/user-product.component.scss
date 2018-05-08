@@ -1,0 +1,27 @@
+.sm-img-box {
+        border: 1px solid #ccc;
+        padding: 3px;
+        background-color: #fff;
+        height: auto;
+        margin: 6px;
+        float: left;
+        img {
+                height: auto;
+        }
+}
+
+.prod-list {
+        border-bottom: 1px solid #ccc;
+        font-size: 0.8rem;
+}
+
+.no-items {
+        font-size: 1rem;
+        text-align: center;
+        font-weight: bold
+}
+
+.mat-tab-body-content {
+        overflow-y: auto !important;
+        overflow-x: hidden !important;
+}

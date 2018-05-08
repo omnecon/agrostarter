@@ -22,8 +22,9 @@
             <strong>Price: {{product.price | currency:'EUR':true}}</strong>
          </p>
          <p>
+            <strong>Categories: </strong>
             <span *ngFor="let catgory of product.categories">
-               <strong>Categories: </strong>{{catgory.cat_text}}
+               {{catgory.cat_text}}
             </span>
          </p>
          <div class="row">
@@ -72,8 +73,8 @@
             <div *ngFor="let user of questionsBy">
                <img [src]="user.photoURL" (error)="'assets/profile/profile-images.jpg'" class="sm-img-avatar" />
                <p style="line-height: 50px; font-size: 14px">
-                  {{user.firstName}} {{user.lastName}}:
-                  <span style="color:#1c90f3">{{user.question}}</span>
+                  <span style="color:#1c90f3">{{user.firstName}} {{user.lastName}}: </span>
+                  {{user.question}}
                   <br> {{user.ans}}
                </p>
             </div>

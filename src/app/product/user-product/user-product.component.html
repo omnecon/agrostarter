@@ -5,12 +5,75 @@
 <br>
 <mat-tab-group [(selectedIndex)]="tabIndex" (selectedIndexChange)="onTabChange($event)">
    <mat-tab label="Draft">
-      Draft products
+      <div *ngIf="allDraftProduct?.length > 0; else noDraftProd">
+         <div *ngFor="let draft of allDraftProduct" class="row prod-list">
+            <div class="col-3">
+               <img [src]="draft.images[0].url" class="sm-img-box" onError="this.src='assets/images/no_image_available.jpeg';">
+            </div>
+            <div class="col-9" style="padding-right: 0px;">
+               <strong>{{draft.title}}</strong>
+               <br> {{draft.text}}
+               <br>
+               <strong>Price: {{draft.price | currency:'EUR':true}}</strong>
+               <br>
+               <strong>Categories: </strong>
+               <span *ngFor="let catgory of draft.categories">
+                  {{catgory.cat_text}}
+               </span>
+            </div>
+         </div>
+      </div>
+      <ng-template #noDraftProd style="font-size: 0.8rem;">
+         <br>
+         <div class="no-items"> No Draft Products.</div>
+      </ng-template>
    </mat-tab>
    <mat-tab label="offered">
-      Offer products
+      <div *ngIf="allPublishProduct?.length > 0; else noPublishProd">
+         <div *ngFor="let publish of allPublishProduct" class="row prod-list">
+            <div class="col-3">
+               <img [src]="publish.images[0].url" class="sm-img-box" (error)="this.src='assets/profile/profile-images.jpg'">
+            </div>
+            <div class="col-9" style="padding-right: 0px;">
+               <strong>{{publish.title}}</strong>
+               <br> {{publish.text}}
+               <br>
+               <strong>Price: {{publish.price | currency:'EUR':true}}</strong>
+               <br>
+               <strong>Categories: </strong>
+               <span *ngFor="let catgory of publish.categories">
+                  {{catgory.cat_text}}
+               </span>
+            </div>
+         </div>
+      </div>
+      <ng-template #noPublishProd style="font-size: 0.8rem;">
+         <br>
+         <div class="no-items"> No Publish Products.</div>
+      </ng-template>
    </mat-tab>
    <mat-tab label="Sold">
-      Sold products
+      <div *ngIf="allSoldProduct?.length > 0; else noSoldProd">
+         <div *ngFor="let sold of allSoldProduct" class="row prod-list">
+            <div class="col-3">
+               <img [src]="sold.images[0].url" class="sm-img-box" (error)="this.src='assets/profile/profile-images.jpg'">
+            </div>
+            <div class="col-9" style="padding-right: 0px;padding-left:0px;">
+               <strong>{{sold.title}}</strong>
+               <br> {{sold.text}}
+               <br>
+               <strong>Price: {{sold.price | currency:'EUR':true}}</strong>
+               <br>
+               <strong>Categories: </strong>
+               <span *ngFor="let catgory of sold.categories">
+                  {{catgory.cat_text}}
+               </span>
+            </div>
+         </div>
+      </div>
+      <ng-template #noSoldProd>
+         <br>
+         <div class="no-items"> No Sold Products.</div>
+      </ng-template>
    </mat-tab>
 </mat-tab-group>
