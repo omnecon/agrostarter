@@ -8,13 +8,16 @@
       <div *ngIf="allDraftProduct?.length > 0; else noDraftProd">
          <div *ngFor="let draft of allDraftProduct;let i = index" class="row prod-list" (click)="openProductDetailPage(draft.pid)">
             <div class="col-3">
-               <img [src]="draft.images[0].url" class="sm-img-box" onError="this.src='assets/images/no_image_available.jpeg';">
+               <img *ngIf="draft.images.length>0;else defaultDraftImg" [src]="draft.images[0].url" class="sm-img-box" onError="this.src='assets/images/no_image_available.jpeg';">
+               <ng-template #defaultDraftImg>
+                  <img mat-card-image src='assets/images/no_image_available.jpeg'>
+               </ng-template>
             </div>
             <div class="col-9" style="padding-right: 0px;">
                <strong>{{draft.title}}</strong>
                <br> {{draft.text}}
                <br>
-               <strong>Price: {{draft.price | currency:'EUR':true}}</strong>
+               <strong>Price: {{draft.price | currency:'EUR':'symbol-narrow'}}</strong>
                <br>
                <strong>Categories: </strong>
                <div *ngFor="let catgory of draft.categories;let i= index">
@@ -28,19 +31,23 @@
       <ng-template #noDraftProd style="font-size: 0.8rem;">
          <br>
          <div class="no-items"> No Draft Products.</div>
+         <loading-spinner></loading-spinner>
       </ng-template>
    </mat-tab>
-   <mat-tab label="offered">
+   <mat-tab label="Offered">
       <div *ngIf="allPublishProduct?.length > 0; else noPublishProd">
          <div *ngFor="let publish of allPublishProduct" class="row prod-list" (click)="openProductDetailPage(publish.pid)">
             <div class="col-3">
-               <img [src]="publish.images[0].url" class="sm-img-box" (error)="this.src='assets/profile/profile-images.jpg'">
+               <img *ngIf="publish.images.length>0;else defaultPublishImg" [src]="publish.images[0].url" class="sm-img-box" (error)="this.src='assets/profile/profile-images.jpg'">
+               <ng-template #defaultPublishImg>
+                  <img mat-card-image src='assets/images/no_image_available.jpeg'>
+               </ng-template>
             </div>
             <div class="col-9" style="padding-right: 0px;">
                <strong>{{publish.title}}</strong>
                <br> {{publish.text}}
                <br>
-               <strong>Price: {{publish.price | currency:'EUR':true}}</strong>
+               <strong>Price: {{publish.price | currency:'EUR':'symbol-narrow'}}</strong>
                <br>
                <strong>Categories: </strong>
                <div *ngFor="let catgory of publish.categories;let i= index">
@@ -53,19 +60,23 @@
       <ng-template #noPublishProd style="font-size: 0.8rem;">
          <br>
          <div class="no-items"> No Publish Products.</div>
+         <loading-spinner></loading-spinner>
       </ng-template>
    </mat-tab>
    <mat-tab label="Sold">
       <div *ngIf="allSoldProduct?.length > 0; else noSoldProd">
          <div *ngFor="let sold of allSoldProduct" class="row prod-list" (click)="openProductDetailPage(sold.pid)">
             <div class="col-3">
-               <img [src]="sold.images[0].url" class="sm-img-box" (error)="this.src='assets/profile/profile-images.jpg'">
+               <img *ngIf="sold.images.length>0;else defaultSoldImg" [src]="sold.images[0].url" class="sm-img-box" (error)="this.src='assets/profile/profile-images.jpg'">
+               <ng-template #defaultSoldImg>
+                  <img mat-card-image src='assets/images/no_image_available.jpeg'>
+               </ng-template>
             </div>
             <div class="col-9" style="padding-right: 0px;padding-left:0px;">
                <strong>{{sold.title}}</strong>
                <br> {{sold.text}}
                <br>
-               <strong>Price: {{sold.price | currency:'EUR':true}}</strong>
+               <strong>Price: {{sold.price | currency:'EUR':'symbol-narrow'}}</strong>
                <br>
                <strong>Categories: </strong>
                <div *ngFor="let catgory of sold.categories;let i= index">
@@ -78,6 +89,7 @@
       <ng-template #noSoldProd>
          <br>
          <div class="no-items"> No Sold Products.</div>
+         <loading-spinner></loading-spinner>
       </ng-template>
    </mat-tab>
 </mat-tab-group>

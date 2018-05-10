@@ -28,7 +28,7 @@ export class ProductDetailsComponent implements OnInit {
 
    user: any;
    currentUser: any;
-
+   userLogin = false;
    Offers: any;
    offersForm: FormGroup;
    offersBy: Array<any> = [];
@@ -36,7 +36,6 @@ export class ProductDetailsComponent implements OnInit {
    questionsBy: Array<any> = [];
    questionsForm: FormGroup;
    question: Array<any> = [];
-   // private productDoc: AngularFirestoreDocument<product>;
    formErrors: FormQueErrors = {
       'que': '',
    };
@@ -51,11 +50,17 @@ export class ProductDetailsComponent implements OnInit {
    };
    // tslint:disable-next-line:max-line-length
    constructor(private router: Router, private route: ActivatedRoute, private productService: ProductService, private afs: AngularFirestore, private fb: FormBuilder, private notify: NotifyService) {
-      this.currentUser = JSON.parse(window.localStorage.getItem('user'));
-      this.uid = this.currentUser.uid;
+
    }
 
    ngOnInit() {
+      this.currentUser = JSON.parse(window.localStorage.getItem('user'));
+      if (this.currentUser) {
+         this.uid = this.currentUser.uid;
+         this.userLogin = true;
+      } else {
+         this.userLogin = false;
+      }
       this.questionsForm = this.fb.group({
          'que': ['', Validators.required],
       });
@@ -71,11 +76,15 @@ export class ProductDetailsComponent implements OnInit {
       if (this.productId) {
          this.getProduct();
          this.getQuestions();
-         this.getOffers();
+         if (this.userLogin) {
+            this.getOffers();
+         }
+      } else {
+         this.router.navigate(['/']);
       }
 
    }
-
+   // Form Validation
    // tslint:disable-next-line:cyclomatic-complexity
    onValueChanged(data: any, formName: any) {
       if (formName === 'question') {
@@ -123,30 +132,14 @@ export class ProductDetailsComponent implements OnInit {
       }
    }
 
+   // Get product by id
    getProduct() {
       this.productService.getProduct(this.productId).subscribe((resp: product) => {
          this.product = resp;
-         this.getLocation(this.product.location);
       });
    }
 
-   getLocation(location: number[]) {
-      // Add watch
-      const watchId = navigator.geolocation.watchPosition((position: any) => {
-         // do something with position
-         // console.log('position in geolocation watch === ', position);
-      }, (error: any) => {
-         // do something with error
-         // console.log('error in  geolocationwatch === ', error);
-      });
-      // Clear watch
-      navigator.geolocation.clearWatch(watchId);
-      this.productService.getCurrentLocationProd(location).subscribe((resp: any) => {
-         const address = resp.results[0].formatted_address;
-         this.productLocation = address;
-      });
-   }
-
+   // Add question against product
    addQuestion() {
       const data = {
          question: this.questionsForm.value.que,
@@ -168,6 +161,7 @@ export class ProductDetailsComponent implements OnInit {
 
    }
 
+   // Get all questions using product id
    getQuestions() {
       this.productService.getQue(this.productId).subscribe((resp: any) => {
          if (resp.docs && resp.docs.length > 0) {
@@ -179,6 +173,7 @@ export class ProductDetailsComponent implements OnInit {
       });
    }
 
+   // add offers using user id
    addOffer() {
       const data = {
          text: this.offersForm.value.desc,
@@ -198,6 +193,7 @@ export class ProductDetailsComponent implements OnInit {
       }
    }
 
+   // get all offers using user id
    getOffers() {
       this.productService.getOffers().subscribe((resp: any) => {
          this.Offers = resp;
@@ -205,6 +201,7 @@ export class ProductDetailsComponent implements OnInit {
       });
    }
 
+   // get user details like name profile images using user id and add question to locat array
    getQueUserDetails(userId: any, que: any) {
       this.afs.collection('users').doc(userId)
          .ref
@@ -227,6 +224,7 @@ export class ProductDetailsComponent implements OnInit {
          });
    }
 
+   // get user details like name profile images using user id for offer list
    getOfferUserDetails(userId: any) {
       this.afs.collection('users').doc(userId)
          .ref
@@ -241,6 +239,7 @@ export class ProductDetailsComponent implements OnInit {
          });
    }
 
+   // On click on buttton scroll to offer or quetion form.
    scroll(el: any) {
       el.scrollIntoView({ behavior: 'smooth' });
    }

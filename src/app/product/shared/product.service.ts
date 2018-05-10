@@ -9,12 +9,12 @@ import { NotifyService } from '../../core/notify.service';
 import * as firebase from 'firebase';
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
-import { Headers } from '@angular/http';
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams, HttpResponse } from '@angular/common/http';
 
 @Injectable()
 export class ProductService {
    private headers: HttpHeaders = new HttpHeaders();
+   private response: HttpResponse<any>;
    private _product: Subject<any> = new Subject<any>();
    private _imgUpload: Subject<any> = new Subject<any>();
    private _allProducts: Subject<any[]> = new Subject<any[]>();
@@ -38,12 +38,21 @@ export class ProductService {
       this.productsCollection = this.afs.collection('products', (ref) => ref.orderBy('status').limit(5));
       this.headers.set('Content-Type', 'application/json; charset=utf-8');
       const newUser: any = JSON.parse(window.localStorage.getItem('user'));
-      // if (newUser) { this.auth.currentUser.uid = newUser.uid; }
-      console.log('newUser = ', newUser);
+      if (newUser) {
+         this.uid = newUser.uid;
+      } else {
+         this.auth.user.subscribe((user) => {
+            if (user) {
+               this.uid = user.uid;
+            } else {
+               this.uid = this.auth.currentUser;
+            }
+         });
+      }
    }
-
+   // Get all Published product
    getAllProduct() {
-      this.productsCollection.ref.where('status', '==', 'published').get().then((snapshot) => {
+      this.productsCollection.ref.get().then((snapshot) => {
          const allProd: any = [];
          snapshot.forEach((doc) => {
             if (doc.exists) {
@@ -74,14 +83,15 @@ export class ProductService {
       return this._allProducts.asObservable();
    }
 
-   getAllDraftProduct() {
-      console.log('this.auth.currentUser.uid  ', this.auth.currentUser.uid);
+   getAllDraftProduct(uid: any) {
+      console.log('this.uid  == ', this.uid);
       // tslint:disable-next-line:max-line-length
-      this.productsCollection.ref.where('userId', '==', this.auth.currentUser.uid).where('status', '==', 'default').get().then((snapshot) => {
+      this.productsCollection.ref.where('userId', '==', uid).where('status', '==', 'default').get().then((snapshot) => {
          const allProd: any = [];
          snapshot.forEach((doc) => {
             if (doc.exists) {
                const singleProd = doc.data();
+               console.log('doc.id    ==== ', doc.id);
                singleProd.pid = doc.id;
                allProd.push(singleProd);
             } else {
@@ -95,9 +105,9 @@ export class ProductService {
       return this._allDraftProducts.asObservable();
    }
 
-   getAllPublishProduct() {
+   getAllPublishProduct(uid: any) {
       // tslint:disable-next-line:max-line-length
-      this.productsCollection.ref.where('userId', '==', this.auth.currentUser.uid).where('status', '==', 'published').get().then((snapshot) => {
+      this.productsCollection.ref.where('userId', '==', uid).where('status', '==', 'published').get().then((snapshot) => {
          const allProd: any = [];
          snapshot.forEach((doc) => {
             if (doc.exists) {
@@ -115,8 +125,8 @@ export class ProductService {
       return this._allPublishProducts.asObservable();
    }
 
-   getAllSoldProduct() {
-      this.productsCollection.ref.where('userId', '==', this.auth.currentUser.uid).where('status', '==', 'sold').get().then((snapshot) => {
+   getAllSoldProduct(uid: any) {
+      this.productsCollection.ref.where('userId', '==', uid).where('status', '==', 'sold').get().then((snapshot) => {
          const allProd: any = [];
          snapshot.forEach((doc) => {
             if (doc.exists) {
@@ -147,7 +157,7 @@ export class ProductService {
    }
 
    getOffers() {
-      this.afs.collection('offers', (ref) => ref.where('userId', '==', this.auth.currentUser.uid)).ref.get().then((snapshot) => {
+      this.afs.collection('offers', (ref) => ref.where('userId', '==', this.uid)).ref.get().then((snapshot) => {
          snapshot.forEach((doc) => {
             if (doc.exists) {
                this._offers.next(doc.data());
@@ -173,7 +183,7 @@ export class ProductService {
          question: queData.question,
          ans: '',
          pid: queData.pid,
-         uid: this.auth.currentUser.uid,
+         uid: this.uid,
       };
       this.afs.collection('products').doc(queData.pid).collection('questions').add(qData).then((data) => {
          queData.qid = data.id;
@@ -192,9 +202,6 @@ export class ProductService {
    getQue(pid: string) {
       this.afs.collection('products').doc(pid).collection('questions').ref.get().then((data) => {
          this._question.next(data);
-         // doc.data() will be undefined in this case
-         // console.log('all que', data);
-
       }).catch((error) => this.handleError(error));
       return this._question.asObservable();
    }
@@ -216,7 +223,7 @@ export class ProductService {
       const storageRef = firebase.storage().ref();
       const ext = upload.file.name.split('.').pop();
       const timestamp = new Date().getTime().toString();
-      const filename = `agruno_${this.auth.currentUser.uid}_${timestamp}.${ext}`;
+      const filename = `agruno_${this.uid}_${timestamp}.${ext}`;
       const uploadTask = storageRef.child(`${this.imgbasePath}/${filename}`).put(upload.file);
 
       uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED,
@@ -234,7 +241,7 @@ export class ProductService {
             if (uploadTask.snapshot.downloadURL) {
                upload.url = uploadTask.snapshot.downloadURL;
                upload.name = filename;
-               upload.uid = this.auth.currentUser.uid;
+               upload.uid = this.uid;
 
                this.saveFileData(upload);
                return;
@@ -277,6 +284,18 @@ export class ProductService {
       return storageRef.child(`${this.imgbasePath}/${name}`).delete();
    }
 
+   getUserLocation(): Observable<any> {
+      const httpOptions = {
+         headers: new HttpHeaders({
+            'Content-Type': 'application/json',
+            'Authorization': 'my-auth-token',
+         }),
+      };
+      const key = { 'key': 'AIzaSyAL-QZaz0TObbwMZd_KXqj1Aq7xZ6Ylegc' };
+      const apiUrl = `https://www.googleapis.com/geolocation/v1/geolocate?key=AIzaSyAL-QZaz0TObbwMZd_KXqj1Aq7xZ6Ylegc`;
+      return this.http.post<any>(apiUrl, httpOptions);
+   }
+
    getCurrentLocation(lat: any, lng: any): Observable<any> {
       // tslint:disable-next-line:max-line-length
       const apiUrl = `https://maps.googleapis.com/maps/api/geocode/json?key=AIzaSyAL-QZaz0TObbwMZd_KXqj1Aq7xZ6Ylegc&latlng=${lat},${lng}&sensor=true`;
@@ -291,7 +310,7 @@ export class ProductService {
 
    getUpdatedLocation(address: any) {
       // tslint:disable-next-line:max-line-length
-      const apiUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${address};key=AIzaSyAL-QZaz0TObbwMZd_KXqj1Aq7xZ6Ylegc`;
+      const apiUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${address}&key=AIzaSyAL-QZaz0TObbwMZd_KXqj1Aq7xZ6Ylegc`;
       return this.http.get(apiUrl, { headers: this.headers, responseType: 'json' });
    }
 

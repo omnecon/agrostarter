@@ -12,9 +12,7 @@
         background-color: #fff;
         height: 100px;
         margin-right: 6px;
-        float: left; //   background-size: contain;
-        //   background-size: 94px 94px;
-        //   background-repeat: no-repeat;
+        float: left;
         img {
                 height: 88px;
                 width: 94px;
@@ -43,7 +41,7 @@
                 padding: 10px;
         }
         .mat-card-image {
-                margin: 0 0 5px 0;
+                margin: 5px 0 5px 0;
         }
         .mat-card-title {
                 margin-bottom: 6px;
@@ -52,10 +50,71 @@
                 margin-bottom: 6px;
         }
 }
+
 .sm-img-avatar {
-   img {
-           height: 42px;
-           border-radius: 22px;
-   }
+        img {
+                height: 42px;
+                border-radius: 22px;
+        }
 }
 
+.input-full-width {
+        width: 100%;
+        padding-bottom: 0 !important;
+}
+
+.no-items {
+        font-size: 1rem;
+        text-align: center;
+        font-weight: bold
+}
+
+.crop {
+        width: auto;
+        height: 200px;
+        overflow: hidden;
+}
+
+.dropbtn {
+        background-color: #4caf50;
+        color: white;
+        padding: 5px;
+        margin: 5px 0 5px 5px;
+        font-size: 16px;
+        border: none;
+}
+
+.dropdown {
+        position: relative;
+        display: inline-block;
+        cursor: pointer !important;
+}
+
+.dropdown-content {
+        display: none;
+        position: absolute;
+        background-color: #fff;
+        min-width: 100px;
+        box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+        z-index: 1;
+        padding: 5px;
+        div {
+                margin: 5px;
+                border-bottom: 1px solid #ccc;
+        }
+}
+
+.dropdown-content a {
+        color: black;
+        padding: 12px 16px;
+        text-decoration: none;
+        display: block;
+}
+
+.dropdown:hover .dropdown-content {
+        display: block;
+}
+
+.dropdown:hover .dropbtn {
+        background-color: #3e8e41;
+}

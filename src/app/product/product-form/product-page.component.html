@@ -1,29 +1,30 @@
 <div class="row">
-   <div class="col-sm">
-      <div *ngIf="currentUpload && (currentUpload?.progress<100)">
-         <span class="help is-danger"> Progress: {{currentUpload?.name}} | {{currentUpload?.progress }}% Complete
-         </span>
-         <progress class="progress is-success" min=1 max=100 value="{{ currentUpload?.progress }}" style="height: 2px;"></progress>
-      </div>
-      <div class="img-box" style="position: relative">
-         <slideshow [minHeight]="'200px'" [autoPlay]="true" [showArrows]="true" [imageUrls]="imageSources" [lazyLoad]="imageSources?.length > 1" [autoPlayWaitForLazyLoad]="true" *ngIf="imageSources?.length >= 1" #slideshow (onSwipeLeft)="getIndex($event)" (onSwipeLeft)="getIndex($event)" (onSlideLeft)="getIndex($event)" (onSlideRight)="getIndex($event)">
-         </slideshow>
-         <button mat-raised-button color="accent" class="btn btn-lg" style="z-index:1000;position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); -ms-transform: translate(-50%, -50%);" (click)="deleteProductImg()" *ngIf="imageSources?.length > 0">Delete</button>
-         <div *ngIf="imageSources?.length <= 0" class="no-img">No Images are available</div>
-      </div>
-      <div class="img-drag-drop">
-         <input type="file" multiple (change)="detectFiles($event)">
-      </div>
-      <div style="float:left">{{totalImgUpload}} Files added
-         <span *ngIf="totalImgUpload > 0">,Please Upload it.</span>
-      </div>
-      <div class="custom-file-upload">
-         <span class="btn btn-default btn-file" (click)="uploadMulti()">
-            Upload Images
-         </span>
+      <div class="col-sm">
+         <div *ngIf="currentUpload && (currentUpload?.progress<100)">
+            <span class="help is-danger"> Progress: {{currentUpload?.name}} | {{currentUpload?.progress }}% Complete
+            </span>
+            <progress class="progress is-success" min=1 max=100 value="{{ currentUpload?.progress }}" style="height: 3px;"></progress>
+         </div>
+         <div class="img-box" style="position: relative">
+            <slideshow [minHeight]="'200px'" [autoPlay]="autoPlay" [showArrows]="showArrows" [imageUrls]="imageSources" *ngIf="imageSources?.length >= 1" #slideshow (onSwipeLeft)="getIndex($event)" (onSwipeLeft)="getIndex($event)" (onSlideLeft)="getIndex($event)" (onSlideRight)="getIndex($event)">
+            </slideshow>
+            <!-- <img *ngIf="imageSources?.length === 1" [src]="imageSources[0].url" style="height: 200px"> -->
+            <button mat-raised-button color="accent" class="btn btn-lg" style="z-index:1000;position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); -ms-transform: translate(-50%, -50%);" (click)="deleteProductImg(currentIndex)" *ngIf="imageSources?.length >= 1">Delete</button>
+            <div *ngIf="imageSources?.length <= 0" class="no-img">No Images are available</div>
+         </div>
+         <div class="img-drag-drop">
+            <input type="file" multiple (change)="detectFiles($event)">
+         </div>
+         <div style="float:left;" class="help is-danger">{{totalImgUpload}} Files added
+            <span *ngIf="totalImgUpload > 0">, Please Upload it.</span>
+         </div>
+         <div class="custom-file-upload">
+            <span class="btn btn-default btn-file" (click)="uploadMulti()">
+               Upload Images
+            </span>
+         </div>
       </div>
    </div>
-</div>
 <form [formGroup]="productForm" (ngSubmit)="addProduct()">
    <div class="row">
       <div class="col-sm">
@@ -50,7 +51,7 @@
       <div class="col-sm">
          <mat-form-field class="input-full-width">
             <label for="location1">Location</label>
-            <input matInput type="text" id="location1" formControlName="location" required>
+            <input matInput type="text" id="location1" formControlName="location" required (change)="getUpdatedGeoLocation($event.target.value)">
          </mat-form-field>
          <div *ngIf="formErrors.location" class="help is-danger">
             {{ formErrors.location }}
@@ -74,7 +75,7 @@
       <div class="col-sm">
          <br>
          <br>
-         <button mat-raised-button color="accent" type="submit" class="btn btn-block btn-lg" [disabled]="!productForm.valid">Add Product</button>
+         <button mat-raised-button color="accent" type="submit" class="btn btn-block btn-lg" [disabled]="!productForm.valid || (imageSources?.length<=0)">Add Product</button>
       </div>
    </div>
 </form>

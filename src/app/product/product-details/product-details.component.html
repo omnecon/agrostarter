@@ -7,7 +7,7 @@
          </div>
          <br>
          <div *ngFor="let image of product.images">
-            <img [src]="image.url" class="sm-img-box" onError="this.src='assets/images/no_image_available.jpeg';" [ngStyle]="{'width':(100/product.images.length) + '%' }">
+            <img [src]="image.url" class="sm-img-box" onError="this.src='assets/images/no_image_available.jpeg';" style="width:22%">
          </div>
       </div>
       <div class="col-8">
@@ -16,10 +16,10 @@
             {{product.text}}
          </p>
          <p>
-            <strong>Location: {{productLocation}}</strong>
+            <strong>Location: {{product.productLocation}}</strong>
          </p>
          <p>
-            <strong>Price: {{product.price | currency:'EUR':true}}</strong>
+            <strong>Price: {{product.price | currency:'EUR':'symbol-narrow'}}</strong>
          </p>
          <p>
             <strong>Categories: </strong>
@@ -28,7 +28,7 @@
                <span *ngIf="(i<(product.categories?.length-1))">,</span>
             </span>
          </p>
-         <div class="row">
+         <div class="row" [hidden]="!userLogin">
             <div class="col-6">
                <button mat-raised-button color="accent" class="btn btn-lg" (click)="scroll(offer)">Make an offers</button>
             </div>
@@ -51,7 +51,7 @@
                </p>
             </div>
          </span>
-         <form [formGroup]="offersForm" (ngSubmit)="addOffer()" #offer>
+         <form [formGroup]="offersForm" (ngSubmit)="addOffer()" #offer [hidden]="!userLogin">
             <mat-form-field class="input-full-width">
                <input matInput type="text" id="desc" formControlName="desc" required placeholder="Offer text">
             </mat-form-field>
@@ -80,7 +80,7 @@
                </p>
             </div>
          </span>
-         <form [formGroup]="questionsForm" (ngSubmit)="addQuestion()" #question>
+         <form [formGroup]="questionsForm" (ngSubmit)="addQuestion()" #question [hidden]="!userLogin">
             <mat-form-field class="input-full-width">
                <input matInput type="text" id="que1" formControlName="que" required placeholder="Question">
             </mat-form-field>

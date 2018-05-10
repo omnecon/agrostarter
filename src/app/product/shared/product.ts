@@ -7,5 +7,6 @@ export class product {
    status: string;
    text: string;
    title: string;
+   productLocation: string;
    questions?: Array<any>;
 }

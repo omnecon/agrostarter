@@ -13,41 +13,56 @@ export class UserProductComponent implements OnInit {
    allDraftProduct: any = [];
    allPublishProduct: any = [];
    allSoldProduct: any = [];
-   constructor(private router: Router, private productService: ProductService) { }
+   uid: any;
+   constructor(private router: Router, private productService: ProductService) {
+
+   }
    ngOnInit() {
+      const newUser: any = JSON.parse(window.localStorage.getItem('user'));
+      if (newUser) {
+         this.uid = newUser.uid;
+      } else {
+         this.uid = window.localStorage.getItem('userId');
+      }
       this.getAllDraftProduct();
       this.getAllPublishProduct();
       this.getAllSoldProduct();
    }
+
+   // Get all draft Products
    getAllDraftProduct() {
-      this.productService.getAllDraftProduct().subscribe((data: any) => {
+      this.productService.getAllDraftProduct(this.uid).subscribe((data: any) => {
          this.allDraftProduct = data;
       });
    }
+
+   // Get all publish Products
    getAllPublishProduct() {
-      this.productService.getAllPublishProduct().subscribe((data: any) => {
+      this.productService.getAllPublishProduct(this.uid).subscribe((data: any) => {
          this.allPublishProduct = data;
       });
    }
+
+   // Get all Sold Products
    getAllSoldProduct() {
-      this.productService.getAllSoldProduct().subscribe((data: any) => {
+      this.productService.getAllSoldProduct(this.uid).subscribe((data: any) => {
          this.allSoldProduct = data;
       });
    }
+
+   // On tab change get index of tab from material tabs
    onTabChange(index: any) {
       this.tabIndex = index;
-      // if (index === 0) {
-      //    this.getAllDraftProduct();
-      // } else if (index === 1) {
-      //    this.getAllPublishProduct();
-      // } else {
-      //    this.getAllSoldProduct();
-      // }
    }
+
+   // Redirect to product page for adding a new product
    addNewProduct() {
       this.router.navigate(['/product']);
    }
+
+   // Redict to product detail page on click of product
    openProductDetailPage(pid: any) {
+      console.log('pid 000000000 ', pid);
       this.router.navigate(['/product-details', { productId: pid }]);
    }
 }

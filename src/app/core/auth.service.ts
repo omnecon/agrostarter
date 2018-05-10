@@ -108,7 +108,10 @@ export class AuthService {
       return this.afAuth.auth.createUserWithEmailAndPassword(email, password)
          .then((user: User) => {
             user.terms = true;
-            window.localStorage.setItem('user', JSON.stringify(user));
+            this.currentUser = user.uid;
+            const loginUser = JSON.stringify(user);
+            window.localStorage.setItem('user', loginUser);
+            window.localStorage.setItem('userId', this.currentUser);
             return user;
          })
          .catch((error) => this.handleError(error));
@@ -136,7 +139,7 @@ export class AuthService {
 
    signOut() {
       this.afAuth.auth.signOut().then(() => {
-
+         window.localStorage.removeItem('user');
          this.router.navigate(['/login']);
       });
    }
@@ -153,8 +156,10 @@ export class AuthService {
       const data = {
          uid: user.uid,
       };
-      this.currentUser = data;
-      window.localStorage.setItem('user', JSON.stringify(user));
+      this.currentUser = user.uid;
+      const loginUser = JSON.stringify(user);
+      window.localStorage.setItem('user', loginUser);
+      window.localStorage.setItem('userId', this.currentUser);
       return userRef.set(data, { merge: true });
    }
 
@@ -184,8 +189,10 @@ export class AuthService {
       if (newUser) {
          data.agbAcceptedDate = new Date();
       }
-      this.currentUser = data;
-      window.localStorage.setItem('user', JSON.stringify(data));
+      this.currentUser = user.uid;
+      const loginUser = JSON.stringify(user);
+      window.localStorage.setItem('user', loginUser);
+      window.localStorage.setItem('userId', this.currentUser);
       return userRef.set(data);
    }
 }

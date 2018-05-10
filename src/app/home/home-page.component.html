@@ -1,30 +1,79 @@
-<div class="row prod-card">
-   <div class="col-4" *ngFor="let product of allProduct" style="padding:0">
-   <mat-card class="prod-card-item">
-      <mat-card-header>
-         <div mat-card-avatar class="sm-img-avatar"><img [src]="product.photoURL" onError="this.src='assets/images/no_image_available.jpeg';" [alt]="product.firstName"/></div>
-         <mat-card-title>{{product.firstName}} {{product.lastName}}</mat-card-title>
-         <mat-card-subtitle>{{product.title}}</mat-card-subtitle>
-      </mat-card-header>
-      <img mat-card-image [src]="product.images[0].url" onError="this.src='assets/images/no_image_available.jpeg';" [alt]="product.title">
-      <mat-card-content>
-         <div class="row">
-            <div class="col-sm-3">
-               Price:
-               <br> {{product.price | currency:'EUR':true}}
+<div class="row">
+   <div class="col-sm-3">
+      Search By Category :
+      <mat-form-field>
+         <mat-select [(ngModel)]="selectedCatValue" (change)="getProductByCategory($event.value)">
+            <mat-option value="all" selected>
+               All
+            </mat-option>
+            <mat-option *ngFor="let cat of categories" [value]="cat.cat_id">
+               {{ cat.cat_text }}
+            </mat-option>
+         </mat-select>
+      </mat-form-field>
+   </div>
+   <div class="col-sm-4">
+      Title:
+      <mat-form-field class="input-full-width">
+         <input matInput type="text" #searchtext placeholder="Search by product name" (keyup.enter)="getProductByTitle(searchtext.value)" (keyup)="checkNull($event)">
+      </mat-form-field>
+   </div>
+   <div class="col-sm-4">
+      Location:
+      <mat-form-field class="input-full-width">
+         <input matInput type="text" #searchLocationtext placeholder="Search by location" (keyup.enter)="getProductByLocation(searchLocationtext.value)" (keyup)="checkNull($event)">
+      </mat-form-field>
+   </div>
+</div>
+<div class="row prod-card" *ngIf="allProduct?.length>0; else noProdTemplate">
+   <div class="col-sm-12 col-md-4 col-lg-4" *ngFor="let product of allProduct" style="padding:0">
+      <mat-card class="prod-card-item" (click)="openProductDetailPage(product.pid)">
+         <mat-card-header>
+            <div mat-card-avatar class="sm-img-avatar">
+               <img [src]="product.photoURL" onError="this.src='assets/images/no_image_available.jpeg';" [alt]="product.firstName" />
             </div>
-            <div class="col-sm-4">
-               Distance:
-               <br> 1.5 km
-            </div>
-            <div class="col-sm-4">
-               Category: <span *ngFor="let catgory of product.categories;let i= index">
+            <mat-card-title>{{product.firstName}} {{product.lastName}}</mat-card-title>
+            <mat-card-subtitle>{{product.title}}</mat-card-subtitle>
+         </mat-card-header>
+         <div class="crop">
+            <img mat-card-image *ngIf="product.images.length>0;else other" [src]="product.images[0].url" onError="this.src='assets/images/no_image_available.jpeg';" [alt]="product.title">
+            <ng-template #other>
+               <img mat-card-image src='assets/images/no_image_available.jpeg' [alt]="product.title">
+            </ng-template>
+         </div>
+         <mat-card-content>
+            <div class="row">
+               <div class="col-sm-3">
+                  Price:
+                  <br> {{product.price | number | currency:'EUR':'symbol-narrow'}}
+               </div>
+               <div class="col-sm-4">
+                  Distance:
+                  <br>
+                  <span [innerText]="getDistancePlace(product.location)"></span>
+               </div>
+               <div class="col-sm-4">
+                  <div class="dropdown">
+                     <button class="dropbtn">Categories</button>
+                     <div class="dropdown-content">
+                        <div *ngFor="let catgory of product.categories;let i= index">
+                           {{catgory.cat_text}}
+                        </div>
+                     </div>
+                  </div>
+                  <!-- Category:
+                  <span *ngFor="let catgory of product.categories;let i= index">
                      {{catgory.cat_text}}
                      <span *ngIf="(i<(product.categories?.length-1))">,</span>
-                  </span>
+                  </span> -->
+               </div>
             </div>
-         </div>
-      </mat-card-content>
-   </mat-card>
+         </mat-card-content>
+      </mat-card>
+   </div>
 </div>
-</div>
+<ng-template #noProdTemplate style="font-size: 0.8rem;">
+   <br>
+   <div class="no-items"> No Products Found.</div>
+   <loading-spinner></loading-spinner>
+</ng-template>
