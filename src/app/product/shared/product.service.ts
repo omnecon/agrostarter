@@ -25,7 +25,7 @@ export class ProductService {
    private _offers: Subject<any> = new Subject<any>();
    private _productImg: Subject<any> = new Subject<any>();
    basePath = 'products';
-   imgbasePath = 'users-product-img';
+   imgbasePath = 'user-products-imgs';
    uploadsRef: AngularFireList<Upload>;
    uploads: Observable<Upload[]>;
    uid: any;
@@ -222,8 +222,9 @@ export class ProductService {
    pushUpload(upload: Upload) {
       const storageRef = firebase.storage().ref();
       const ext = upload.file.name.split('.').pop();
-      const timestamp = new Date().getTime().toString();
-      const filename = `agruno_${this.uid}_${timestamp}.${ext}`;
+      var TS = window.performance.timing.navigationStart + window.performance.now();
+      // const timestamp = new Date().getTime().toString();
+      const filename = `agruno_${this.uid}_${TS}.${ext}`;
       const uploadTask = storageRef.child(`${this.imgbasePath}/${filename}`).put(upload.file);
 
       uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED,

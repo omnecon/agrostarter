@@ -18,12 +18,15 @@ import { SlideshowModule } from 'ng-simple-slideshow';
 
 import { AgmCoreModule } from '@agm/core';
 import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
+import { LazyLoadImagesModule } from 'ngx-lazy-load-images';
+
 @NgModule({
    imports: [
       AgmCoreModule.forRoot({
          libraries: ['places'],
       }),
       NgMultiSelectDropDownModule.forRoot(),
+      LazyLoadImagesModule,
       CommonModule,
       SharedModule,
       ReactiveFormsModule,

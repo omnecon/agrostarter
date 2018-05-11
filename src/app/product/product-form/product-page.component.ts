@@ -7,9 +7,7 @@ import { NotifyService } from '../../core/notify.service';
 import { product } from '../shared/product';
 import { Upload } from '../shared/upload';
 import { Observable } from 'rxjs/Observable';
-import { UploadService } from '../../uploads/shared/upload.service';
 import { Router } from '@angular/router';
-declare let navigator: any;
 type ProductFields = 'title' | 'desc' | 'location' | 'category' | 'price';
 type FormProfileErrors = { [p in ProductFields]: string };
 // declare let geocoder: any;
@@ -20,7 +18,8 @@ type FormProfileErrors = { [p in ProductFields]: string };
    encapsulation: ViewEncapsulation.None,
 })
 export class ProductPageComponent implements OnInit, OnDestroy {
-   @ViewChild('slideshow') _slideshow: any;
+   @ViewChild('inputFile') _inputFile: any;
+
    selectedFiles: FileList | null;
    currentUpload: Upload;
    uploads: Observable<Upload[]>;
@@ -46,25 +45,16 @@ export class ProductPageComponent implements OnInit, OnDestroy {
       'price': { 'required': 'Price is required.' },
 
    };
-   imagem = '';
-   showNoImg = true;
-   pic: any;
-   totalImgUpload = 0;
-totalUpload = 0;
+
    latitude: number;
    longitude: number;
-   zoom: number;
    uid: any;
-   categories: Array<any> = [];
+   categories: Array<any> = []
    selectedCategories: Array<any> = [];
    dropdownSettings: any = {};
-   // For Image slider
-   autoPlay = true;
-   showArrows = true;
-   lazyLoad= true;
-   autoPlayWaitForLazyLoad = true;
+
    // tslint:disable-next-line:max-line-length
-   constructor(private fb: FormBuilder, private db: AngularFireDatabase, private productService: ProductService, private upSvc: UploadService, private notify: NotifyService, private router: Router) {
+   constructor(private fb: FormBuilder, private db: AngularFireDatabase, private productService: ProductService, private notify: NotifyService, private router: Router) {
    }
 
    ngOnInit() {
@@ -98,6 +88,10 @@ totalUpload = 0;
          itemsShowLimit: 3,
          allowSearchFilter: true,
       };
+
+            // detect all images are upload properly 
+            this.uploads = this.productService.getUploads();
+            this.uploads.subscribe(() => this.showSpinner = false);
    }
 
    // Form validation
@@ -195,15 +189,11 @@ totalUpload = 0;
       console.log('file detect');
       this.selectedFiles = ($event.target as HTMLInputElement).files;
       const files = this.selectedFiles;
-      this.totalImgUpload = files.length;
-      this.totalUpload = this.totalImgUpload;
    }
 
    // Upload multiple images
    uploadMulti() {
       const files = this.selectedFiles;
-      this.totalImgUpload = files.length;
-      this.totalUpload = this.totalImgUpload;
       if (!files || files.length === 0) {
          console.error('No Multi Files found!');
          return;
@@ -211,59 +201,33 @@ totalUpload = 0;
 
       Array.from(files).forEach((file) => {
          this.currentUpload = new Upload(file);
-         this.totalImgUpload = this.totalImgUpload - 1;
          this.productService.pushUpload(this.currentUpload).subscribe((imageData) => {
             const newdata = {
                url: imageData.url,
                caption: imageData.name,
                $key: imageData.$key,
             };
-            const index = this.imageSources.findIndex((resp) => resp.$key === newdata.$key);
+            const index = this.imageSources.findIndex((resp) => resp.$key === imageData.$key);
             if (index === -1) {
-               this.imageSources.push(newdata);               
+               this.imageSources.push(newdata);
             }
          });
       });
-   }
 
-   // Delet image by image id
-   deleteProductImg() {
+      this._inputFile.nativeElement.value = null;
+      this.selectedFiles = null;
+   }
+   deleteProductImg(currentImgData:any, imgIndex:any) {
       const userChoice = confirm('Are you sure you want to permanently delete this product image?');
       if (userChoice) {
-         if(this.imageSources.length===1){
-            this.currentProductData = this.imageSources[0];
-            this.imageSources.length = 0;
-            this.autoPlay = false;
-            this.showArrows = false;
-            this.productService.deleteUpload(this.currentProductData).subscribe((data) => {
-            });
-         } else {
-            const index = this.imageSources.findIndex((data) => data.$key === this.currentProductData.$key);
-            this.productService.deleteUpload(this.currentProductData).subscribe((data) => {
-                  if (index > -1) {
-                     this.imageSources.splice(index, 1);
-                     this.totalUpload = this.totalUpload-1;
-                     if((index + 1) === this.imageSources.length){
-                        this._slideshow.onSlide(-1);
-                     } else if(index === 0) {
-                        this._slideshow.onSlide(1);
-                     } else {
-                     this._slideshow.goToSlide(1);
-                     }
-                   
-                  }
-               });
-         } 
-
+         this.imageSources = this.imageSources.filter(item => item.$key !== currentImgData.$key);
+          var index = this.imageSources.indexOf(currentImgData);
+            this.productService.deleteUpload(currentImgData).subscribe((data) => {
+               console.log('deleted image === ',data);
+            });  
       } else {
          console.log('You pressed Cancel!');
       }
-   }
-
-   // Get current image in from slider on slide left or right
-   getIndex(index: any) {
-      this.currentProductImg = index;
-      this.currentProductData = this.imageSources[this.currentProductImg];
    }
 
    // Get current location latitude and longitude.

@@ -104,16 +104,17 @@ export class HomePageComponent implements OnInit {
       this._searchtext.nativeElement.value = '';
       this._searchLocationtext.nativeElement.value = '';
    }
+   
    /**
     * @description Search product using string value prduct title
     * @param value product title
     */
-   getProductByTitle(value: any) {
+   searchProductByTitle(value: any) {
       this.selectedCatValue = 'all';
       this._searchLocationtext.nativeElement.value = '';
       const searchVal = value;
       this.allProduct = this.allProductClone;
-      if (searchVal && searchVal.trim() !== '') {
+      if (searchVal && searchVal.trim() !== '' && (searchVal.length>=3)) {
          this.allProduct = this.allProduct.filter((item) => {
             return (item.title.toLowerCase().indexOf(searchVal.toLowerCase()) > -1);
          });
@@ -124,12 +125,12 @@ export class HomePageComponent implements OnInit {
     * @description Search product by location entered by user
     * @param value product location
     */
-   getProductByLocation(value: any) {
+   searchProductByLocation(value: any) {
       this.selectedCatValue = 'all';
       this._searchtext.nativeElement.value = '';
       const searchVal = value;
       this.allProduct = this.allProductClone;
-      if (searchVal && searchVal.trim() !== '') {
+      if (searchVal && searchVal.trim() !== '' && (searchVal.length>=3)) {
          this.allProduct = this.allProduct.filter((item) => {
             return (item.productLocation.toLowerCase().indexOf(searchVal.toLowerCase()) > -1);
          });

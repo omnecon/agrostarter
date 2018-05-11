@@ -1,5 +1,5 @@
-<div class="container">
-   <div class="row" *ngIf="product">
+<div class="container" *ngIf="product;else other">
+   <div class="row">
       <div class="col-4">
          <div class="lg-img-box">
             <slideshow [minHeight]="'200px'" [autoPlay]="true" [showArrows]="true" [imageUrls]="product.images" [lazyLoad]="product.images?.length > 1" [autoPlayWaitForLazyLoad]="true" *ngIf="product.images?.length >= 1" onError="this.imageUrls='assets/images/no_image_available.jpeg';">
@@ -7,7 +7,7 @@
          </div>
          <br>
          <div *ngFor="let image of product.images">
-            <img [src]="image.url" class="sm-img-box" onError="this.src='assets/images/no_image_available.jpeg';" style="width:22%">
+            <img [src]="image.url" class="sm-img-box1" onError="this.src='assets/images/no_image_available.jpeg';" style="width:22%">
          </div>
       </div>
       <div class="col-8">
@@ -37,6 +37,7 @@
             </div>
          </div>
       </div>
+
    </div>
    <br>
    <div class="row">
@@ -92,3 +93,6 @@
       </div>
    </div>
 </div>
+<ng-template #other>
+      <loading-spinner></loading-spinner>
+</ng-template>
