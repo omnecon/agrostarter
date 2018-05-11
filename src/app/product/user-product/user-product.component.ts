@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { product } from '../shared/product';
 import { ProductService } from '../shared/product.service';
 @Component({
@@ -14,7 +14,7 @@ export class UserProductComponent implements OnInit {
    allPublishProduct: any = [];
    allSoldProduct: any = [];
    uid: any;
-   constructor(private router: Router, private productService: ProductService) {
+   constructor(private router: Router, private productService: ProductService, private route: ActivatedRoute) {
 
    }
    ngOnInit() {
@@ -48,6 +48,11 @@ export class UserProductComponent implements OnInit {
       this.productService.getAllSoldProduct(this.uid).subscribe((data: any) => {
          this.allSoldProduct = data;
       });
+   }
+
+   editProduct(pid:any){
+console.log('pid === ', pid);
+this.router.navigate(['/product', { productId: pid }]);
    }
 
    // On tab change get index of tab from material tabs

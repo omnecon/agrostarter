@@ -7,7 +7,7 @@ import { NotifyService } from '../../core/notify.service';
 import { product } from '../shared/product';
 import { Upload } from '../shared/upload';
 import { Observable } from 'rxjs/Observable';
-import { Router } from '@angular/router';
+import { Router,ActivatedRoute } from '@angular/router';
 type ProductFields = 'title' | 'desc' | 'location' | 'category' | 'price';
 type FormProfileErrors = { [p in ProductFields]: string };
 // declare let geocoder: any;
@@ -19,7 +19,7 @@ type FormProfileErrors = { [p in ProductFields]: string };
 })
 export class ProductPageComponent implements OnInit, OnDestroy {
    @ViewChild('inputFile') _inputFile: any;
-
+   @ViewChild('category') _category: HTMLElement;
    selectedFiles: FileList | null;
    currentUpload: Upload;
    uploads: Observable<Upload[]>;
@@ -30,6 +30,7 @@ export class ProductPageComponent implements OnInit, OnDestroy {
    productForm: FormGroup;
    geocoder: any;
    addprodSubscription: any;
+   editprodSubscription:any;
    productLocation: any;
    formErrors: FormProfileErrors = {
       'title': '',
@@ -52,15 +53,10 @@ export class ProductPageComponent implements OnInit, OnDestroy {
    categories: Array<any> = []
    selectedCategories: Array<any> = [];
    dropdownSettings: any = {};
-
+   productId: any;
+   product: product;
    // tslint:disable-next-line:max-line-length
-   constructor(private fb: FormBuilder, private db: AngularFireDatabase, private productService: ProductService, private notify: NotifyService, private router: Router) {
-   }
-
-   ngOnInit() {
-      const newUser: any = JSON.parse(window.localStorage.getItem('user'));
-      this.uid = newUser.uid;
-      this.getUserLocation();
+   constructor(private fb: FormBuilder, private db: AngularFireDatabase, private productService: ProductService, private notify: NotifyService,private router: Router, private route: ActivatedRoute,private _zone:NgZone) {
       this.productForm = this.fb.group({
          'title': ['', Validators.required],
          'desc': ['', Validators.required],
@@ -69,6 +65,48 @@ export class ProductPageComponent implements OnInit, OnDestroy {
          'price': ['', Validators.required],
          'status': ['default'],
       });
+   }
+
+   ngOnInit() {
+
+      const newUser: any = JSON.parse(window.localStorage.getItem('user'));
+      this.uid = newUser.uid;
+      this.getUserLocation();
+
+
+      this.productId = this.route.snapshot.paramMap.get('productId');
+
+      if (this.productId) {
+         this.productService.getProduct(this.productId).subscribe((resp: product) => {
+            this.product = resp;
+
+            console.log('this.product  == ', this.product.status);
+
+            this.selectedCategories = this.product.categories;
+            this.productForm.get('title').setValue(this.product.title);
+            this.productForm.get('desc').setValue(this.product.text);
+            
+            this.productForm.get('category').setValue(this.selectedCategories);
+            this.productForm.get('location').setValue(this.product.productLocation);
+            this.productForm.get('price').setValue(this.product.price);
+            this.productForm.get('status').setValue(this.product.status);
+            // this._category.click();
+            this.imageSources = this.product.images;
+            
+         });
+      } else {
+         this.productForm = this.fb.group({
+            'title': ['', Validators.required],
+            'desc': ['', Validators.required],
+            'location': [''],
+            'category': ['', Validators.required],
+            'price': ['', Validators.required],
+            'status': ['default'],
+         });
+         
+      }
+
+      
       this.productForm.valueChanges.subscribe((data) => this.onValueChanged(data));
       this.onValueChanged();
 
@@ -135,6 +173,47 @@ export class ProductPageComponent implements OnInit, OnDestroy {
 
       if (this.productForm.valid) {
          this.addprodSubscription = this.productService.createProduct(data).subscribe((resp: product) => {
+            window.scroll(0, 0);
+            this.productForm.get('category').setValue([]);
+            this.productForm.get('category').patchValue([]);
+            this.selectedCategories = [];
+            this.productForm.reset({
+               'title': [''],
+               'desc': [''],
+               'location': [''],
+               'category': [],
+               'price': [''],
+               'status': ['default'],
+            });
+            this.getUserLocation();
+
+            this.notify.update('Product add successfully', 'success');
+            if (getStatus === 'published') {
+               this.router.navigate(['/product-details', { productId: resp.pid }]);
+            } else {
+               this.router.navigate(['/user-product']);
+            }
+         });
+      }
+   }
+
+   editProduct() {
+      const getStatus = this.productForm.value.status;
+      const data = {
+         categories: this.selectedCategories,
+         images: this.imageSources,
+         location: [this.latitude, this.longitude],
+         productLocation: this.productLocation,
+         price: this.productForm.value.price,
+         status: getStatus,
+         text: this.productForm.value.desc,
+         title: this.productForm.value.title,
+         userId: this.uid,
+         pid:this.productId,
+      };
+
+      if (this.productForm.valid) {
+         this.editprodSubscription = this.productService.editProduct(data).subscribe((resp: product) => {
             window.scroll(0, 0);
             this.productForm.get('category').setValue([]);
             this.productForm.get('category').patchValue([]);
@@ -221,6 +300,7 @@ export class ProductPageComponent implements OnInit, OnDestroy {
       const userChoice = confirm('Are you sure you want to permanently delete this product image?');
       if (userChoice) {
          this.imageSources = this.imageSources.filter(item => item.$key !== currentImgData.$key);
+         
           var index = this.imageSources.indexOf(currentImgData);
             this.productService.deleteUpload(currentImgData).subscribe((data) => {
                console.log('deleted image === ',data);

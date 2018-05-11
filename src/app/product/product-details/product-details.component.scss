@@ -12,9 +12,13 @@
         height: 50px;
         margin-right: 3px;
         float: left;
+        cursor:pointer;
         img {
                 height: auto;
         }
+}
+.sm-img-box1:hover{
+   border: 1px solid #666;
 }
 
 .slideshow-container {

@@ -8,5 +8,6 @@ export class product {
    text: string;
    title: string;
    productLocation: string;
+   userId:string;
    questions?: Array<any>;
 }

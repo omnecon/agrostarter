@@ -2,7 +2,7 @@
 <div class="row">
    <div class="col-sm">    
          <div *ngFor="let image of imageSources; let i = index" class="img-sm-box" [lazy-load-images]="{ rootMargin: '50px' }">
-            <img [src]="image.url" data-src="{{image.url}}" >
+            <img [src]="image.url" data-src="{{image.url}}">
             <button mat-raised-button color="accent" class="btn btn-lg" (click)="deleteProductImg(image,i)" style="margin:5px">Delete</button>              
          </div>
          <loading-spinner *ngIf="showSpinner"></loading-spinner>
@@ -27,7 +27,7 @@
       </div>
    </div>
 </div>
-<form [formGroup]="productForm" (ngSubmit)="addProduct()">
+<form [formGroup]="productForm" >
    <div class="row">
       <div class="col-sm">
          <mat-form-field class="input-full-width">
@@ -44,7 +44,7 @@
          <div *ngIf="formErrors.desc" class="help is-danger">
             {{ formErrors.desc }}
          </div>
-         <ng-multiselect-dropdown formControlName="category" [data]="categories" [settings]="dropdownSettings" (onSelect)="onItemSelect($event)" (onSelectAll)="onSelectAll($event)" (onDeSelectAll)="onDeSelectAll($event)" (onDeSelect)="onItemDeSelect($event)" required>
+         <ng-multiselect-dropdown formControlName="category" [data]="categories" [settings]="dropdownSettings" (onSelect)="onItemSelect($event)" (onSelectAll)="onSelectAll($event)" (onDeSelectAll)="onDeSelectAll($event)" (onDeSelect)="onItemDeSelect($event)" #category required>
          </ng-multiselect-dropdown>
          <div *ngIf="formErrors.category" class="help is-danger">
             {{ formErrors.category }}
@@ -77,7 +77,8 @@
       <div class="col-sm">
          <br>
          <br>
-         <button mat-raised-button color="accent" type="submit" class="btn btn-block btn-lg" [disabled]="!productForm.valid || (imageSources?.length<=0)">Add Product</button>
+         <button mat-raised-button color="accent" *ngIf="!productId" type="submit" class="btn btn-block btn-lg" [disabled]="!productForm.valid || (imageSources?.length<=0)" (click)="addProduct()">Add Product</button>
+         <button mat-raised-button color="accent" *ngIf="productId" type="submit" class="btn btn-block btn-lg" [disabled]="!productForm.valid || (imageSources?.length<=0)" (click)="editProduct()">Edit Product</button>
       </div>
    </div>
 </form>

@@ -6,14 +6,14 @@
 <mat-tab-group [(selectedIndex)]="tabIndex" (selectedIndexChange)="onTabChange($event)">
    <mat-tab label="Draft">
       <div *ngIf="allDraftProduct?.length > 0; else noDraftProd">
-         <div *ngFor="let draft of allDraftProduct;let i = index" class="row prod-list" (click)="openProductDetailPage(draft.pid)">
-            <div class="col-3">
+         <div *ngFor="let draft of allDraftProduct;let i = index" class="row prod-list" >
+            <div class="col-3" (click)="openProductDetailPage(draft.pid)">
                <img *ngIf="draft.images.length>0;else defaultDraftImg" [src]="draft.images[0].url" class="sm-img-box" onError="this.src='assets/images/no_image_available.jpeg';">
                <ng-template #defaultDraftImg>
                   <img mat-card-image src='assets/images/no_image_available.jpeg'>
                </ng-template>
             </div>
-            <div class="col-9" style="padding-right: 0px;">
+            <div class="col-7" (click)="openProductDetailPage(draft.pid)">
                <strong>{{draft.title}}</strong>
                <br> {{draft.text}}
                <br>
@@ -26,6 +26,11 @@
                   </span>
                </div>
             </div>
+            <div class="col-2" style="padding-right: 0px;">
+                  <button mat-raised-button color="accent" class="make-offer" (click)="editProduct(draft.pid)" style="float: right;">
+                        Edit
+                  </button>
+            </div>
          </div>
       </div>
       <ng-template #noDraftProd style="font-size: 0.8rem;">
@@ -36,14 +41,14 @@
    </mat-tab>
    <mat-tab label="Offered">
       <div *ngIf="allPublishProduct?.length > 0; else noPublishProd">
-         <div *ngFor="let publish of allPublishProduct" class="row prod-list" (click)="openProductDetailPage(publish.pid)">
-            <div class="col-3">
+         <div *ngFor="let publish of allPublishProduct" class="row prod-list">
+            <div class="col-3"  (click)="openProductDetailPage(publish.pid)">
                <img *ngIf="publish.images.length>0;else defaultPublishImg" [src]="publish.images[0].url" class="sm-img-box" (error)="this.src='assets/profile/profile-images.jpg'">
                <ng-template #defaultPublishImg>
                   <img mat-card-image src='assets/images/no_image_available.jpeg'>
                </ng-template>
             </div>
-            <div class="col-9" style="padding-right: 0px;">
+            <div class="col-7"  (click)="openProductDetailPage(publish.pid)">
                <strong>{{publish.title}}</strong>
                <br> {{publish.text}}
                <br>
@@ -54,6 +59,11 @@
                   {{catgory.cat_text}}
                   <span *ngIf="(i<(publish.categories?.length-1))">,</span>
                </div>
+            </div>
+            <div class="col-2" style="padding-right: 0px;">
+                  <button mat-raised-button color="accent" class="make-offer" (click)="editProduct(publish.pid)" style="float: right;">
+                        Edit
+                  </button>
             </div>
          </div>
       </div>

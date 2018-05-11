@@ -23,6 +23,7 @@ export class ProductService {
    private _allSoldProducts: Subject<any[]> = new Subject<any[]>();
    private _question: Subject<any> = new Subject<any>();
    private _offers: Subject<any> = new Subject<any>();
+   private _offersOwner: Subject<any> = new Subject<any>();
    private _productImg: Subject<any> = new Subject<any>();
    basePath = 'products';
    imgbasePath = 'user-products-imgs';
@@ -32,10 +33,13 @@ export class ProductService {
    pid: any;
    productsCollection: AngularFirestoreCollection<product>;
    productsDocument: AngularFirestoreDocument<product>;
-
+   offersCollection: AngularFirestoreCollection<any>;
    // tslint:disable-next-line:max-line-length
    constructor(private auth: AuthService, private afs: AngularFirestore, private db: AngularFireDatabase, private http: HttpClient, private notify: NotifyService) {
       this.productsCollection = this.afs.collection('products', (ref) => ref.orderBy('status').limit(5));
+      this.offersCollection = this.afs.collection('offers', (ref) => ref.orderBy('price').limit(5));
+      
+
       this.headers.set('Content-Type', 'application/json; charset=utf-8');
       const newUser: any = JSON.parse(window.localStorage.getItem('user'));
       if (newUser) {
@@ -144,6 +148,7 @@ export class ProductService {
       return this._allSoldProducts.asObservable();
    }
 
+
    getProduct(id: string) {
       this.afs.collection('products').doc(id).ref.get().then((doc) => {
          if (doc.exists) {
@@ -156,10 +161,11 @@ export class ProductService {
       return this._product.asObservable();
    }
 
-   getOffers() {
-      this.afs.collection('offers', (ref) => ref.where('userId', '==', this.uid)).ref.get().then((snapshot) => {
+   getOffers(pid: string) {
+      this.offersCollection.ref.where('productId', '==', pid).where('userId', '==', this.uid).get().then((snapshot) => {
          snapshot.forEach((doc) => {
             if (doc.exists) {
+               console.log('doc.data() === ',doc.data());
                this._offers.next(doc.data());
             } else {
                // doc.data() will be undefined in this case
@@ -169,7 +175,20 @@ export class ProductService {
       }).catch((error) => this.handleError(error));
       return this._offers.asObservable();
    }
-
+   getOwnerOffers(pid: string) {
+      this.offersCollection.ref.where('productId', '==', pid).get().then((snapshot) => {
+         snapshot.forEach((doc) => {
+            if (doc.exists) {
+               console.log('doc.data() === ',doc.data());
+               this._offersOwner.next(doc.data());
+            } else {
+               // doc.data() will be undefined in this case
+               console.log('No such document!');
+            }
+         });
+      }).catch((error) => this.handleError(error));
+      return this._offersOwner.asObservable();
+   }
    createProduct(productData: product) {
       this.productsCollection.add(productData).then((data) => {
          productData.pid = data.id;
@@ -177,6 +196,21 @@ export class ProductService {
       }).catch((error) => this.handleError(error));
       return this._product.asObservable();
    }
+
+   editProduct(productData: product) {
+      const id = productData.pid;
+      console.log('id   ==', id);
+      console.log('productData   ==', productData);
+      // this.prodDoc = this.afs.doc<product>(`products/${productData.pid}`);
+      // this.userDoc.update(productData);
+      this.afs.collection('products').doc(id).update(productData).then((data) => {
+         console.log('data  == ', data);
+         // productData.pid = data.id;
+         this._product.next(productData);
+      }).catch((error) => this.handleError(error));
+      return this._product.asObservable();
+   }
+   
 
    createQue(queData: any) {
       const qData = {

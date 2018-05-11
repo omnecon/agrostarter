@@ -1,5 +1,5 @@
 import { take } from 'rxjs/operators';
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation, ViewChild } from '@angular/core';
 import { ReactiveFormsModule, FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument } from 'angularfire2/firestore';
@@ -20,12 +20,12 @@ declare let navigator: any;
    encapsulation: ViewEncapsulation.None,
 })
 export class ProductDetailsComponent implements OnInit {
+   @ViewChild('imgSlider') _imgSlider: any;
    product: product;
    productLocation: any;
    customWidth: number;
    uid: any;
    productId: any;
-
    user: any;
    currentUser: any;
    userLogin = false;
@@ -76,9 +76,9 @@ export class ProductDetailsComponent implements OnInit {
       if (this.productId) {
          this.getProduct();
          this.getQuestions();
-         if (this.userLogin) {
-            this.getOffers();
-         }
+         if (this.userLogin ) {  
+            this.getMyOffers();
+          }
       } else {
          this.router.navigate(['/']);
       }
@@ -132,10 +132,15 @@ export class ProductDetailsComponent implements OnInit {
       }
    }
 
+   gotoProductImg(index:any){
+this._imgSlider.goToSlide(index);
+   }
+
    // Get product by id
    getProduct() {
       this.productService.getProduct(this.productId).subscribe((resp: product) => {
          this.product = resp;
+         console.log('this.product  == ', this.product);
       });
    }
 
@@ -194,10 +199,22 @@ export class ProductDetailsComponent implements OnInit {
    }
 
    // get all offers using user id
-   getOffers() {
-      this.productService.getOffers().subscribe((resp: any) => {
+   getMyOffers() {
+      const getMyOffers = this.productService.getOffers(this.productId).subscribe((resp: any) => {
+         console.log('My offers == ', resp);
          this.Offers = resp;
          this.getOfferUserDetails(this.Offers.userId);
+         // getMyOffers.unsubscribe();
+      });
+   }
+
+   // get all offers using user id
+   getOwnerOffers() {
+      const getOwnerOffers = this.productService.getOwnerOffers(this.productId).subscribe((resp: any) => {
+         console.log('Owner offers == ', resp);
+         this.Offers = resp;
+         this.getOfferUserDetails(this.Offers.userId);
+         // getOwnerOffers.unsubscribe();
       });
    }
 
@@ -220,7 +237,6 @@ export class ProductDetailsComponent implements OnInit {
                // doc.data() will be undefined in this case
                console.log('No such document!');
             }
-
          });
    }
 
@@ -243,5 +259,6 @@ export class ProductDetailsComponent implements OnInit {
    scroll(el: any) {
       el.scrollIntoView({ behavior: 'smooth' });
    }
+   
 
 }
