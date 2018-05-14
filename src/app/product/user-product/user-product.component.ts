@@ -59,9 +59,9 @@ export class UserProductComponent implements OnInit {
       });
    }
 
-   editProduct(pid:any){
-console.log('pid === ', pid);
-this.router.navigate(['/product', { productId: pid }]);
+   editProduct(pid: any) {
+      console.log('pid === ', pid);
+      this.router.navigate(['/product', { productId: pid }]);
    }
 
    // On tab change get index of tab from material tabs

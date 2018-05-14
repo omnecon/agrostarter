@@ -122,16 +122,17 @@ export class ProductPageComponent implements OnInit, OnDestroy {
          allowSearchFilter: true,
       };
 
-      // detect all images are upload properly 
+      // detect all images are upload properly
       this.uploads = this.productService.getUploads();
       this.uploads.subscribe(() => this.showSpinner = false);
    }
 
-clickOnCategory(){
+clickOnCategory() {
    // event.preventDefault();.
-   let element: HTMLElement = document.getElementById('category') as HTMLElement;
-   if(element)
-     { element.click();}
+   const element: HTMLElement = document.getElementById('category') as HTMLElement;
+   if (element) {
+        element.click();
+      }
 }
 
    // Form validation

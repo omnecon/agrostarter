@@ -77,9 +77,9 @@ export class ProductDetailsComponent implements OnInit {
       if (this.productId) {
          this.getProduct();
          this.getQuestions();
-         if (this.userLogin ) {  
+         if (this.userLogin) {
             this.getMyOffers();
-          }
+         }
       } else {
          this.router.navigate(['/']);
       }
@@ -133,19 +133,19 @@ export class ProductDetailsComponent implements OnInit {
       }
    }
 
-    // add to wishlist 
-    addToWishlist(){
+   // add to wishlist
+   addToWishlist() {
       const data = {
-         price : this.product.price,
+         price: this.product.price,
          productLocation: this.product.productLocation,
-         text: this.product.text, 
+         text: this.product.text,
          title: this.product.title,
-         userId: this.uid;
+         userId: this.uid,
          categories: this.product.categories,
          images: this.product.images,
          location: this.product.location,
          status: 'wishlist',
-            };
+      };
 
       const addprodSubscription = this.productService.createProduct(data).subscribe((resp: product) => {
          this.isWishlisted = true;
@@ -155,7 +155,7 @@ export class ProductDetailsComponent implements OnInit {
       });
    }
 
-   gotoProductImg(index:any){
+   gotoProductImg(index: any) {
       this._imgSlider.goToSlide(index);
    }
 
@@ -163,7 +163,7 @@ export class ProductDetailsComponent implements OnInit {
    getProduct() {
       this.productService.getProduct(this.productId).subscribe((resp: product) => {
          this.product = resp;
-         if(this.product.status === 'wishlist'){
+         if (this.product.status === 'wishlist') {
             this.isWishlisted = true;
          }
          console.log('this.product  == ', this.product);

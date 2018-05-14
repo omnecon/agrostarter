@@ -38,8 +38,6 @@ export class ProductService {
    constructor(private auth: AuthService, private afs: AngularFirestore, private db: AngularFireDatabase, private http: HttpClient, private notify: NotifyService) {
       this.productsCollection = this.afs.collection('products', (ref) => ref.orderBy('status').limit(5));
       this.offersCollection = this.afs.collection('offers', (ref) => ref.orderBy('price').limit(5));
-      
-
       this.headers.set('Content-Type', 'application/json; charset=utf-8');
       const newUser: any = JSON.parse(window.localStorage.getItem('user'));
       if (newUser) {
@@ -148,7 +146,6 @@ export class ProductService {
       }).catch((error) => this.handleError(error));
       return this._allPublishProducts.asObservable();
    }
-   
 
    getAllSoldProduct(uid: any) {
       this.productsCollection.ref.where('userId', '==', uid).where('status', '==', 'sold').get().then((snapshot) => {
@@ -169,7 +166,6 @@ export class ProductService {
       return this._allSoldProducts.asObservable();
    }
 
-
    getProduct(id: string) {
       this.afs.collection('products').doc(id).ref.get().then((doc) => {
          if (doc.exists) {
@@ -186,7 +182,7 @@ export class ProductService {
       this.offersCollection.ref.where('productId', '==', pid).where('userId', '==', this.uid).get().then((snapshot) => {
          snapshot.forEach((doc) => {
             if (doc.exists) {
-               console.log('doc.data() === ',doc.data());
+               console.log('doc.data() === ', doc.data());
                this._offers.next(doc.data());
             } else {
                // doc.data() will be undefined in this case
@@ -200,7 +196,7 @@ export class ProductService {
       this.offersCollection.ref.where('productId', '==', pid).get().then((snapshot) => {
          snapshot.forEach((doc) => {
             if (doc.exists) {
-               console.log('doc.data() === ',doc.data());
+               console.log('doc.data() === ', doc.data());
                this._offersOwner.next(doc.data());
             } else {
                // doc.data() will be undefined in this case
@@ -231,7 +227,6 @@ export class ProductService {
       }).catch((error) => this.handleError(error));
       return this._product.asObservable();
    }
-   
 
    createQue(queData: any) {
       const qData = {
@@ -277,7 +272,7 @@ export class ProductService {
    pushUpload(upload: Upload) {
       const storageRef = firebase.storage().ref();
       const ext = upload.file.name.split('.').pop();
-      var TS = window.performance.timing.navigationStart + window.performance.now();
+      const TS = window.performance.timing.navigationStart + window.performance.now();
       // const timestamp = new Date().getTime().toString();
       const filename = `agruno_${this.uid}_${TS}.${ext}`;
       const uploadTask = storageRef.child(`${this.imgbasePath}/${filename}`).put(upload.file);
