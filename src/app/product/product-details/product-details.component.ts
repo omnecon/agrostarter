@@ -137,15 +137,15 @@ export class ProductDetailsComponent implements OnInit {
     addToWishlist(){
       const data = {
          price : this.product.price,
-         productLocation:this.product.productLocation,
+         productLocation: this.product.productLocation,
          text: this.product.text, 
-         title:this.product.title,
-         userId:this.uid;
+         title: this.product.title,
+         userId: this.uid;
          categories: this.product.categories,
          images: this.product.images,
          location: this.product.location,
-         status: 'wishlist',         
-      }
+         status: 'wishlist',
+            };
 
       const addprodSubscription = this.productService.createProduct(data).subscribe((resp: product) => {
          this.isWishlisted = true;
@@ -284,9 +284,7 @@ export class ProductDetailsComponent implements OnInit {
    }
 
    // On click on buttton scroll to offer or quetion form.
-   scroll(el: any) {
-      el.scrollIntoView({ behavior: 'smooth' });
+   scroll(elementId: any) {
+      elementId.scrollIntoView({ behavior: 'smooth' });
    }
-   
-
 }
