@@ -7,7 +7,7 @@ import { NotifyService } from '../../core/notify.service';
 import { product } from '../shared/product';
 import { Upload } from '../shared/upload';
 import { Observable } from 'rxjs/Observable';
-import { Router,ActivatedRoute } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 type ProductFields = 'title' | 'desc' | 'location' | 'category' | 'price';
 type FormProfileErrors = { [p in ProductFields]: string };
 // declare let geocoder: any;
@@ -30,7 +30,7 @@ export class ProductPageComponent implements OnInit, OnDestroy {
    productForm: FormGroup;
    geocoder: any;
    addprodSubscription: any;
-   editprodSubscription:any;
+   editprodSubscription: any;
    productLocation: any;
    formErrors: FormProfileErrors = {
       'title': '',
@@ -44,19 +44,18 @@ export class ProductPageComponent implements OnInit, OnDestroy {
       'desc': '',
       'category': { 'required': 'Please select atleast one category.' },
       'price': { 'required': 'Price is required.' },
-
    };
 
    latitude: number;
    longitude: number;
    uid: any;
-   categories: Array<any> = []
+   categories: Array<any> = [];
    selectedCategories: Array<any> = [];
    dropdownSettings: any = {};
    productId: any;
    product: product;
    // tslint:disable-next-line:max-line-length
-   constructor(private fb: FormBuilder, private db: AngularFireDatabase, private productService: ProductService, private notify: NotifyService,private router: Router, private route: ActivatedRoute,private _zone:NgZone) {
+   constructor(private fb: FormBuilder, private db: AngularFireDatabase, private productService: ProductService, private notify: NotifyService, private router: Router, private route: ActivatedRoute, private _zone: NgZone) {
       this.productForm = this.fb.group({
          'title': ['', Validators.required],
          'desc': ['', Validators.required],
@@ -73,7 +72,6 @@ export class ProductPageComponent implements OnInit, OnDestroy {
       this.uid = newUser.uid;
       this.getUserLocation();
 
-
       this.productId = this.route.snapshot.paramMap.get('productId');
 
       if (this.productId) {
@@ -85,14 +83,12 @@ export class ProductPageComponent implements OnInit, OnDestroy {
             this.selectedCategories = this.product.categories;
             this.productForm.get('title').setValue(this.product.title);
             this.productForm.get('desc').setValue(this.product.text);
-            
             this.productForm.get('category').setValue(this.selectedCategories);
             this.productForm.get('location').setValue(this.product.productLocation);
             this.productForm.get('price').setValue(this.product.price);
             this.productForm.get('status').setValue(this.product.status);
-            // this._category.click();
+             this.clickOnCategory();
             this.imageSources = this.product.images;
-            
          });
       } else {
          this.productForm = this.fb.group({
@@ -103,10 +99,9 @@ export class ProductPageComponent implements OnInit, OnDestroy {
             'price': ['', Validators.required],
             'status': ['default'],
          });
-         
+
       }
 
-      
       this.productForm.valueChanges.subscribe((data) => this.onValueChanged(data));
       this.onValueChanged();
 
@@ -127,10 +122,17 @@ export class ProductPageComponent implements OnInit, OnDestroy {
          allowSearchFilter: true,
       };
 
-            // detect all images are upload properly 
-            this.uploads = this.productService.getUploads();
-            this.uploads.subscribe(() => this.showSpinner = false);
+      // detect all images are upload properly 
+      this.uploads = this.productService.getUploads();
+      this.uploads.subscribe(() => this.showSpinner = false);
    }
+
+clickOnCategory(){
+   // event.preventDefault();.
+   let element: HTMLElement = document.getElementById('category') as HTMLElement;
+   if(element)
+     { element.click();}
+}
 
    // Form validation
    onValueChanged(data?: any) {
@@ -209,7 +211,7 @@ export class ProductPageComponent implements OnInit, OnDestroy {
          text: this.productForm.value.desc,
          title: this.productForm.value.title,
          userId: this.uid,
-         pid:this.productId,
+         pid: this.productId,
       };
 
       if (this.productForm.valid) {
@@ -234,6 +236,7 @@ export class ProductPageComponent implements OnInit, OnDestroy {
             } else {
                this.router.navigate(['/user-product']);
             }
+            this.editprodSubscription.unsubscribe();
          });
       }
    }
@@ -296,15 +299,15 @@ export class ProductPageComponent implements OnInit, OnDestroy {
       this._inputFile.nativeElement.value = null;
       this.selectedFiles = null;
    }
-   deleteProductImg(currentImgData:any, imgIndex:any) {
+   deleteProductImg(currentImgData: any, imgIndex: any) {
       const userChoice = confirm('Are you sure you want to permanently delete this product image?');
       if (userChoice) {
-         this.imageSources = this.imageSources.filter(item => item.$key !== currentImgData.$key);
-         
-          var index = this.imageSources.indexOf(currentImgData);
-            this.productService.deleteUpload(currentImgData).subscribe((data) => {
-               console.log('deleted image === ',data);
-            });  
+         this.imageSources = this.imageSources.filter((item) => item.$key !== currentImgData.$key);
+
+         const index = this.imageSources.indexOf(currentImgData);
+         this.productService.deleteUpload(currentImgData).subscribe((data) => {
+            console.log('deleted image === ', data);
+         });
       } else {
          console.log('You pressed Cancel!');
       }

@@ -129,6 +129,27 @@ export class ProductService {
       return this._allPublishProducts.asObservable();
    }
 
+   getAllWishProduct(uid: any) {
+      // tslint:disable-next-line:max-line-length
+      this.productsCollection.ref.where('userId', '==', uid).where('status', '==', 'wishlist').get().then((snapshot) => {
+         const allProd: any = [];
+         snapshot.forEach((doc) => {
+            if (doc.exists) {
+               const singleProd = doc.data();
+               singleProd.pid = doc.id;
+               allProd.push(singleProd);
+            } else {
+               // doc.data() will be undefined in this case
+               console.log('No such document!');
+            }
+            this._allPublishProducts.next(allProd);
+
+         });
+      }).catch((error) => this.handleError(error));
+      return this._allPublishProducts.asObservable();
+   }
+   
+
    getAllSoldProduct(uid: any) {
       this.productsCollection.ref.where('userId', '==', uid).where('status', '==', 'sold').get().then((snapshot) => {
          const allProd: any = [];

@@ -44,7 +44,7 @@
          <div *ngIf="formErrors.desc" class="help is-danger">
             {{ formErrors.desc }}
          </div>
-         <ng-multiselect-dropdown formControlName="category" [data]="categories" [settings]="dropdownSettings" (onSelect)="onItemSelect($event)" (onSelectAll)="onSelectAll($event)" (onDeSelectAll)="onDeSelectAll($event)" (onDeSelect)="onItemDeSelect($event)" #category required>
+         <ng-multiselect-dropdown formControlName="category" [data]="categories" [settings]="dropdownSettings" (onSelect)="onItemSelect($event)" (onSelectAll)="onSelectAll($event)" (onDeSelectAll)="onDeSelectAll($event)" (onDeSelect)="onItemDeSelect($event)" id="category" #category required>
          </ng-multiselect-dropdown>
          <div *ngIf="formErrors.category" class="help is-danger">
             {{ formErrors.category }}

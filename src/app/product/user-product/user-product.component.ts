@@ -12,6 +12,7 @@ export class UserProductComponent implements OnInit {
    tabIndex = 0;
    allDraftProduct: any = [];
    allPublishProduct: any = [];
+   allWishProduct: any = [];
    allSoldProduct: any = [];
    uid: any;
    constructor(private router: Router, private productService: ProductService, private route: ActivatedRoute) {
@@ -26,6 +27,7 @@ export class UserProductComponent implements OnInit {
       }
       this.getAllDraftProduct();
       this.getAllPublishProduct();
+      this.getAllWishProduct();
       this.getAllSoldProduct();
    }
 
@@ -40,6 +42,13 @@ export class UserProductComponent implements OnInit {
    getAllPublishProduct() {
       this.productService.getAllPublishProduct(this.uid).subscribe((data: any) => {
          this.allPublishProduct = data;
+      });
+   }
+
+   // Get all Wishlist Products
+   getAllWishProduct() {
+      this.productService.getAllWishProduct(this.uid).subscribe((data: any) => {
+         this.allWishProduct = data;
       });
    }
 

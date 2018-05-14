@@ -26,6 +26,7 @@ export class ProductDetailsComponent implements OnInit {
    customWidth: number;
    uid: any;
    productId: any;
+   isWishlisted = false;
    user: any;
    currentUser: any;
    userLogin = false;
@@ -132,14 +133,39 @@ export class ProductDetailsComponent implements OnInit {
       }
    }
 
+    // add to wishlist 
+    addToWishlist(){
+      const data = {
+         price : this.product.price,
+         productLocation:this.product.productLocation,
+         text: this.product.text, 
+         title:this.product.title,
+         userId:this.uid;
+         categories: this.product.categories,
+         images: this.product.images,
+         location: this.product.location,
+         status: 'wishlist',         
+      }
+
+      const addprodSubscription = this.productService.createProduct(data).subscribe((resp: product) => {
+         this.isWishlisted = true;
+         this.notify.update('Product added to wishlist successfully', 'success');
+         this.router.navigate(['/user-product']);
+         addprodSubscription.unsubscribe();
+      });
+   }
+
    gotoProductImg(index:any){
-this._imgSlider.goToSlide(index);
+      this._imgSlider.goToSlide(index);
    }
 
    // Get product by id
    getProduct() {
       this.productService.getProduct(this.productId).subscribe((resp: product) => {
          this.product = resp;
+         if(this.product.status === 'wishlist'){
+            this.isWishlisted = true;
+         }
          console.log('this.product  == ', this.product);
       });
    }
@@ -159,6 +185,7 @@ this._imgSlider.goToSlide(index);
                ans: resp.ans,
             };
             this.getQueUserDetails(this.uid, question);
+            this.addToWishlist();
             this.questionsForm.reset();
             questionSubscription.unsubscribe();
          });
@@ -193,6 +220,7 @@ this._imgSlider.goToSlide(index);
       if (this.offersForm.valid) {
          const offerSubscription = this.productService.createOffers(data).subscribe((resp: any) => {
             this.offersForm.reset();
+            this.addToWishlist();
             offerSubscription.unsubscribe();
          });
       }
