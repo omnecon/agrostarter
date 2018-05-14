@@ -133,27 +133,7 @@ export class ProductDetailsComponent implements OnInit {
       }
    }
 
-   // add to wishlist
-   addToWishlist() {
-      const data = {
-         price: this.product.price,
-         productLocation: this.product.productLocation,
-         text: this.product.text,
-         title: this.product.title,
-         userId: this.uid,
-         categories: this.product.categories,
-         images: this.product.images,
-         location: this.product.location,
-         status: 'wishlist',
-      };
 
-      const addprodSubscription = this.productService.createProduct(data).subscribe((resp: product) => {
-         this.isWishlisted = true;
-         this.notify.update('Product added to wishlist successfully', 'success');
-         this.router.navigate(['/user-product']);
-         addprodSubscription.unsubscribe();
-      });
-   }
 
    gotoProductImg(index: any) {
       this._imgSlider.goToSlide(index);
@@ -166,7 +146,6 @@ export class ProductDetailsComponent implements OnInit {
          if (this.product.status === 'wishlist') {
             this.isWishlisted = true;
          }
-         console.log('this.product  == ', this.product);
       });
    }
 
@@ -185,7 +164,6 @@ export class ProductDetailsComponent implements OnInit {
                ans: resp.ans,
             };
             this.getQueUserDetails(this.uid, question);
-            this.addToWishlist();
             this.questionsForm.reset();
             questionSubscription.unsubscribe();
          });
@@ -220,7 +198,6 @@ export class ProductDetailsComponent implements OnInit {
       if (this.offersForm.valid) {
          const offerSubscription = this.productService.createOffers(data).subscribe((resp: any) => {
             this.offersForm.reset();
-            this.addToWishlist();
             offerSubscription.unsubscribe();
          });
       }
@@ -229,7 +206,6 @@ export class ProductDetailsComponent implements OnInit {
    // get all offers using user id
    getMyOffers() {
       const getMyOffers = this.productService.getOffers(this.productId).subscribe((resp: any) => {
-         console.log('My offers == ', resp);
          this.Offers = resp;
          this.getOfferUserDetails(this.Offers.userId);
          // getMyOffers.unsubscribe();
@@ -239,7 +215,6 @@ export class ProductDetailsComponent implements OnInit {
    // get all offers using user id
    getOwnerOffers() {
       const getOwnerOffers = this.productService.getOwnerOffers(this.productId).subscribe((resp: any) => {
-         console.log('Owner offers == ', resp);
          this.Offers = resp;
          this.getOfferUserDetails(this.Offers.userId);
          // getOwnerOffers.unsubscribe();

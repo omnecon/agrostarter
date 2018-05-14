@@ -40,19 +40,15 @@ export class UserProductComponent implements OnInit {
 
    // Get all publish Products
    getAllPublishProduct() {
-      console.log('---- test ------');
       this.productService.getAllPublishProduct(this.uid).subscribe((data: any) => {
          this.allPublishProduct = data;
-         console.log('this.allPublishProduct  == ', this.allPublishProduct);
       });
    }
 
    // Get all Wishlist Products
    getAllWishProduct() {
-      console.log('---- test 11111 ------');
       this.productService.getAllWishProduct(this.uid).subscribe((data: any) => {
          this.allWishProduct = data;
-         console.log('this.allWishProduct  == ', this.allWishProduct);
       });
    }
 

@@ -104,7 +104,7 @@ export class HomePageComponent implements OnInit {
       this._searchtext.nativeElement.value = '';
       this._searchLocationtext.nativeElement.value = '';
    }
-   
+
    /**
     * @description Search product using string value prduct title
     * @param value product title
@@ -114,7 +114,7 @@ export class HomePageComponent implements OnInit {
       this._searchLocationtext.nativeElement.value = '';
       const searchVal = value;
       this.allProduct = this.allProductClone;
-      if (searchVal && searchVal.trim() !== '' && (searchVal.length>=3)) {
+      if (searchVal && searchVal.trim() !== '' && (searchVal.length >= 3)) {
          this.allProduct = this.allProduct.filter((item) => {
             return (item.title.toLowerCase().indexOf(searchVal.toLowerCase()) > -1);
          });
@@ -130,7 +130,7 @@ export class HomePageComponent implements OnInit {
       this._searchtext.nativeElement.value = '';
       const searchVal = value;
       this.allProduct = this.allProductClone;
-      if (searchVal && searchVal.trim() !== '' && (searchVal.length>=3)) {
+      if (searchVal && searchVal.trim() !== '' && (searchVal.length >= 3)) {
          this.allProduct = this.allProduct.filter((item) => {
             return (item.productLocation.toLowerCase().indexOf(searchVal.toLowerCase()) > -1);
          });
@@ -152,7 +152,6 @@ export class HomePageComponent implements OnInit {
 
    // Redict to product detail page on click of product
    openProductDetailPage(pid: any) {
-      console.log('pid 000000000 ', pid);
       this.router.navigate(['/product-details', { productId: pid }]);
    }
 }

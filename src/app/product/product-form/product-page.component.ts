@@ -77,9 +77,6 @@ export class ProductPageComponent implements OnInit, OnDestroy {
       if (this.productId) {
          this.productService.getProduct(this.productId).subscribe((resp: product) => {
             this.product = resp;
-
-            console.log('this.product  == ', this.product.status);
-
             this.selectedCategories = this.product.categories;
             this.productForm.get('title').setValue(this.product.title);
             this.productForm.get('desc').setValue(this.product.text);
@@ -87,7 +84,7 @@ export class ProductPageComponent implements OnInit, OnDestroy {
             this.productForm.get('location').setValue(this.product.productLocation);
             this.productForm.get('price').setValue(this.product.price);
             this.productForm.get('status').setValue(this.product.status);
-             this.clickOnCategory();
+            this.clickOnCategory();
             this.imageSources = this.product.images;
          });
       } else {
@@ -127,13 +124,13 @@ export class ProductPageComponent implements OnInit, OnDestroy {
       this.uploads.subscribe(() => this.showSpinner = false);
    }
 
-clickOnCategory() {
-   // event.preventDefault();.
-   const element: HTMLElement = document.getElementById('category') as HTMLElement;
-   if (element) {
-        element.click();
+   clickOnCategory() {
+      // event.preventDefault();.
+      const element: HTMLElement = document.getElementById('category') as HTMLElement;
+      if (element) {
+         element.click();
       }
-}
+   }
 
    // Form validation
    onValueChanged(data?: any) {
@@ -304,7 +301,6 @@ clickOnCategory() {
       const userChoice = confirm('Are you sure you want to permanently delete this product image?');
       if (userChoice) {
          this.imageSources = this.imageSources.filter((item) => item.$key !== currentImgData.$key);
-
          const index = this.imageSources.indexOf(currentImgData);
          this.productService.deleteUpload(currentImgData).subscribe((data) => {
             console.log('deleted image === ', data);

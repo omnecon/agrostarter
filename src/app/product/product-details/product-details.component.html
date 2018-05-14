@@ -11,14 +11,13 @@
          </div>
       </div>
       <div class="col-8">
-            <div class="row" [hidden]="!userLogin">
-                  <div class="col-6">
-                        <h3>{{product.title}}</h3>
-                  </div>
-                  <div class="col-6">
-                      <button mat-raised-button color="accent" class="btn btn-lg" [disabled]="isWishlisted" (click)="addToWishlist()">Add to wishllist</button> 
-                  </div>
-            </div>         
+         <div class="row" [hidden]="!userLogin">
+            <div class="col-6">
+               <h3>{{product.title}}</h3>
+            </div>
+            <div class="col-6">
+            </div>
+         </div>
          <p>
             {{product.text}}
          </p>
@@ -44,7 +43,6 @@
             </div>
          </div>
       </div>
-
    </div>
    <br>
    <div class="row">
@@ -101,5 +99,5 @@
    </div>
 </div>
 <ng-template #other>
-      <loading-spinner></loading-spinner>
+   <loading-spinner></loading-spinner>
 </ng-template>
