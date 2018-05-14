@@ -20,6 +20,7 @@ export class ProductService {
    private _allProducts: Subject<any[]> = new Subject<any[]>();
    private _allDraftProducts: Subject<any[]> = new Subject<any[]>();
    private _allPublishProducts: Subject<any[]> = new Subject<any[]>();
+   private _allWishProducts: Subject<any[]> = new Subject<any[]>();
    private _allSoldProducts: Subject<any[]> = new Subject<any[]>();
    private _question: Subject<any> = new Subject<any>();
    private _offers: Subject<any> = new Subject<any>();
@@ -140,11 +141,11 @@ export class ProductService {
                // doc.data() will be undefined in this case
                console.log('No such document!');
             }
-            this._allPublishProducts.next(allProd);
+            this._allWishProducts.next(allProd);
 
          });
       }).catch((error) => this.handleError(error));
-      return this._allPublishProducts.asObservable();
+      return this._allWishProducts.asObservable();
    }
 
    getAllSoldProduct(uid: any) {
