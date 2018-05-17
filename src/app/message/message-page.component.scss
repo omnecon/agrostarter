@@ -93,6 +93,7 @@ textarea {
 .chat-content {
         height: calc(100% - 155px);
         overflow-y: auto;
+        min-height: 255px
 }
 
 .footer {
