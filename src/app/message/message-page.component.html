@@ -44,7 +44,7 @@
          </div>
          <div class="footer">
             <div style=" padding-top: 3px; ">
-               <textarea #msg type="text" placeholder="Nachricht schreiben..." id="scrollHere"></textarea>
+               <textarea rows="4" #msg type="text" placeholder="Nachricht schreiben..." id="scrollHere"></textarea>
                <button style="margin-bottom: 30px; margin-left: 5px;" class="btn btn-sm btn-success" (click)="postMessage(msg.value); msg.value=''">
                   SENDEN
                </button>

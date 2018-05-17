@@ -21,7 +21,7 @@
 
 textarea {
         border: 0;
-        width: 70%;
+        width: 80%;
         height: 100%;
 }
 
@@ -91,13 +91,14 @@ textarea {
 }
 
 .chat-content {
-        height: calc(100% - 155px);
-        overflow-y: auto;
-        min-height: 255px
+        //   height: calc(100% - 155px);
+        overflow-y: scroll;
+        min-height: 155px;
+        max-height: 350px;
 }
 
 .footer {
-        position: absolute;
+        //   position: absolute;
         bottom: 0;
         height: 45px;
         width: 100%;

@@ -1,5 +1,5 @@
 import { MessageService } from './shared/message.service';
-import { Component, OnInit, ElementRef, ViewChild, AfterViewChecked } from '@angular/core';
+import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
 import { AngularFirestore, AngularFirestoreCollection } from 'angularfire2/firestore';
 import { ProductService } from '../product/shared/product.service';
 import { Observable } from 'rxjs/Observable';
@@ -10,7 +10,7 @@ import { database } from 'firebase';
    templateUrl: './message-page.component.html',
    styleUrls: ['./message-page.component.scss'],
 })
-export class MessagePageComponent implements OnInit, AfterViewChecked {
+export class MessagePageComponent implements OnInit {
    @ViewChild('scrollMe') private myScrollContainer: ElementRef;
    chatsCollection: AngularFirestoreCollection<any>;
    bothChatUsers$: Observable<any[]>;
@@ -214,20 +214,16 @@ export class MessagePageComponent implements OnInit, AfterViewChecked {
          });
    }
 
-   scrollToBottom() {
-      const element = document.getElementById('scrollHere') as HTMLElement;
-      if (element) {
-         setTimeout(() => { element.scrollIntoView({ behavior: 'smooth' }); }, 500);
-      }
-   }
-
-   ngAfterViewChecked() {
-      this.scrollToBottom1();
-   }
-
-   scrollToBottom1(): void {
+   scrollToBottom(): void {
       try {
-         this.myScrollContainer.nativeElement.scrollTop = this.myScrollContainer.nativeElement.scrollHeight;
+         setTimeout(() => { this.myScrollContainer.nativeElement.scrollTop = this.myScrollContainer.nativeElement.scrollHeight; }, 500);
       } catch (err) { console.log(); }
    }
+   // scrollToBottom() {
+   //    const element = document.getElementById('scrollHere') as HTMLElement;
+   //    if (element) {
+   //       setTimeout(() => { element.scrollIntoView({ behavior: 'smooth' }); }, 500);
+   //    }
+   // }
+
 }
