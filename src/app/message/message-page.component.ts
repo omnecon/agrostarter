@@ -1,5 +1,5 @@
 import { MessageService } from './shared/message.service';
-import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ElementRef, ViewChild, AfterViewChecked } from '@angular/core';
 import { AngularFirestore, AngularFirestoreCollection } from 'angularfire2/firestore';
 import { ProductService } from '../product/shared/product.service';
 import { Observable } from 'rxjs/Observable';
@@ -10,7 +10,8 @@ import { database } from 'firebase';
    templateUrl: './message-page.component.html',
    styleUrls: ['./message-page.component.scss'],
 })
-export class MessagePageComponent implements OnInit, OnDestroy {
+export class MessagePageComponent implements OnInit, AfterViewChecked {
+   @ViewChild('scrollMe') private myScrollContainer: ElementRef;
    chatsCollection: AngularFirestoreCollection<any>;
    bothChatUsers$: Observable<any[]>;
    chatCollectionChanges$: Observable<any[]>;
@@ -29,14 +30,6 @@ export class MessagePageComponent implements OnInit, OnDestroy {
    constructor(private productService: ProductService, private messageService: MessageService, private afs: AngularFirestore) {
       this.chatsCollection = this.afs.collection('chats', (ref) => ref.limit(5));
       this.today = Date();
-      if (this.chatId) {
-         this.chatCollectionChanges$ = this.afs.doc<any>(`chats/${this.chatId}/messages`).valueChanges();
-         this.chatCollectionChanges$.subscribe((data) => {
-            console.log('-----change doc-----', data);
-            // this.getMessages(this.chatId);
-         });
-      }
-
    }
 
    ngOnInit() {
@@ -45,8 +38,6 @@ export class MessagePageComponent implements OnInit, OnDestroy {
       this.currentUser = this.userOneData.uid;
 
       this.getAllCurrentUserChat();
-
-      // this.getAllCurrentUserChat(this.currentUser);
       if (this.bothChatUsers$) {
          this.bothChatUsers$.subscribe((snapshot) => {
             this.allChatList = [];
@@ -58,7 +49,7 @@ export class MessagePageComponent implements OnInit, OnDestroy {
                this.chatId = chatData.chatId;
                this.getProduct(this.productId);
                this.getUserTwoProfile(this.userTwoId);
-               this.getMessages(this.chatId);
+               this.getMessages();
             } else {
                if (snapshot.length > 0) {
                   this.productId = snapshot[0].productId;
@@ -67,11 +58,17 @@ export class MessagePageComponent implements OnInit, OnDestroy {
                   this.chatId = snapshot[0].chatId;
                   this.getProduct(this.productId);
                   this.getUserTwoProfile(this.userTwoId);
-                  this.getMessages(this.chatId);
+
                }
 
             }
             if (snapshot.length > 0) {
+               // tslint:disable-next-line:max-line-length
+               this.afs.doc<any>(`chats/${this.chatId}`).collection('messages', (ref) => ref.orderBy('sendDate', 'asc')).valueChanges().subscribe((data) => {
+                  this.chatMessage = [];
+                  this.chatMessage = data;
+                  this.scrollToBottom();
+               });
                for (let i = 0, len = snapshot.length; i < len; i++) {
                   const chatDetails = {
                      userName: '',
@@ -156,7 +153,7 @@ export class MessagePageComponent implements OnInit, OnDestroy {
       this.chatId = this.allChatList[index].chatId;
       this.getProduct(this.productId);
       this.getUserTwoProfile(this.userTwoId);
-      this.getMessages(this.chatId);
+      this.getMessages();
    }
 
    deleteChat(index: any) {
@@ -164,7 +161,7 @@ export class MessagePageComponent implements OnInit, OnDestroy {
       if (userChoice) {
          this.chatsCollection.doc(this.allChatList[index].chatId).delete().then((data) => {
             this.chatMessage = [];
-            // this.getAllCurrentUserChat();
+            this.getAllCurrentUserChat();
          });
       } else {
          console.log('You pressed Cancel!');
@@ -172,26 +169,26 @@ export class MessagePageComponent implements OnInit, OnDestroy {
    }
 
    postMessage(value: any) {
+      const TS = window.performance.timing.navigationStart + window.performance.now();
       const newData = {
-         // type: '',
          user: this.currentUser,
          message: value,
-         sendDate: Date(),
+         sendDate: TS,
       };
 
       this.afs.collection('chats').doc(this.chatId).collection('messages').add(newData).then((data) => {
-         this.chatMessage.push(newData);
+         console.log('post messsage successfully');
       }).catch((error) => console.log('error ------- ', error));
    }
 
-   getMessages(id: any) {
+   getMessages() {
+      const TS = window.performance.timing.navigationStart + window.performance.now();
       this.chatMessage = [];
-      this.afs.collection('chats').doc(id).collection('messages').ref.orderBy('sendDate', 'desc').get().then((snapshot) => {
+      this.afs.collection('chats').doc(this.chatId).collection('messages').ref.orderBy('sendDate', 'asc').get().then((snapshot) => {
          snapshot.forEach((doc) => {
             const chat = doc.data();
             this.chatMessage.push(chat);
             this.getUserDetails(doc.data().user);
-            // this.getMessages(this.chatId);
          });
          this.scrollToBottom();
       }).catch((error) => console.log('error ------- ', error));
@@ -218,15 +215,19 @@ export class MessagePageComponent implements OnInit, OnDestroy {
    }
 
    scrollToBottom() {
-      const element = document.getElementById('myFakeLabel') as HTMLElement;
+      const element = document.getElementById('scrollHere') as HTMLElement;
       if (element) {
          setTimeout(() => { element.scrollIntoView({ behavior: 'smooth' }); }, 500);
       }
-   } // scrollToBottom()
+   }
 
-   ngOnDestroy() {
-      // this.cdRef.detach(); // try this
-      // for me I was detect changes inside 'subscribe' so was enough for me to just unsubscribe;
-      // this.authObserver.unsubscribe();
+   ngAfterViewChecked() {
+      this.scrollToBottom1();
+   }
+
+   scrollToBottom1(): void {
+      try {
+         this.myScrollContainer.nativeElement.scrollTop = this.myScrollContainer.nativeElement.scrollHeight;
+      } catch (err) { console.log(); }
    }
 }

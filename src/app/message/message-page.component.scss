@@ -2,6 +2,7 @@
         font-size: 12px;
         float: left;
         margin: 5px 0 0 0;
+        width: 100%;
 }
 
 .img-avatar {
@@ -18,9 +19,9 @@
         }
 }
 
-input {
+textarea {
         border: 0;
-        width: 80%;
+        width: 70%;
         height: 100%;
 }
 
@@ -32,10 +33,12 @@ input {
         float: right;
         margin-top: 2px;
         margin-bottom: 10px;
+        margin-right: 10px;
         padding: 10px;
         font-size: 14px;
         clear: both;
         word-wrap: break-word;
+
 }
 
 .chat-other {
@@ -46,6 +49,7 @@ input {
         float: left;
         margin-top: 2px;
         margin-bottom: 10px;
+        margin-left: 10px;
         padding: 10px;
         font-size: 14px;
         clear: both;
@@ -66,4 +70,38 @@ input {
 
 .delete-chat {
         float: right;
+}
+
+.main-content {
+        border-left: 1px solid #999;
+        border-bottom: 1px solid #999;
+        border-right: 1px solid #999;
+        background-color: #efefef;
+        padding: 0;
+}
+
+.header {
+        margin: 0 15px;
+        .header-row {
+                padding-left: 0;
+                padding-right: 0;
+                border-bottom: 1px solid #999;
+                background-color: #fff
+        }
+}
+
+.chat-content {
+        height: calc(100% - 155px);
+        overflow-y: auto;
+}
+
+.footer {
+        position: absolute;
+        bottom: 0;
+        height: 45px;
+        width: 100%;
+        padding-top: 4px;
+        background-color: #fff;
+        margin: 0 auto;
+        border-top: 1px solid #999;
 }

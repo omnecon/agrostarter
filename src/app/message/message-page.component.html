@@ -1,77 +1,62 @@
-<div class="container" style="heigth:100%">
-   <div class="row" *ngIf="allChatList?.length>0;else noChatHistory" style="border:1px solid #999;heigth:100%">
-      <div class="col-3" style="padding-right: 0">
+<div class="container">
+   <div class="row" *ngIf="allChatList?.length>0;else noChatHistory" style="border-left:1px solid #999;border-top:1px solid #999;border-right:1px solid #999;">
+      <div class="col-3 col-md-3 col-sm-12" style="padding-right: 0;padding-left: 0;border-bottom: 1px solid #999;">
          <div *ngIf="allChatList">
-            <div class="row" *ngFor="let chatDetail of allChatList;let i = index" style="border-bottom:1px solid #999">
-               <div class="col-8" class="chat-detail">
-                  <img [src]="chatDetail.productImg" class="img-avatar" (click)="openChat(i)">
-                  <div style="height: 55px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" (click)="openChat(i)">
-                     <span style="color:darkblue"> {{chatDetail.userName}} </span>
-                     <br> {{chatDetail.productTitle}}
-                  </div>
-               </div>
-               <div class="col-4">
-                  <div class="delete-chat">
-                     <button mat-icon-button (click)="deleteChat(i)">
-                        <mat-icon>delete_forever</mat-icon>
-                     </button>
-                  </div>
-               </div>
-            </div>
-            <!-- <div *ngFor="let chatDetail of allChatList;let i = index" class="chat-detail"></div> -->
-            <!-- <button mat-icon-button style="float:right;"> -->
-            <!-- </button> -->
-         </div>
-      </div>
-      <div class="col-7" style="border-left: 1px solid #999; border-right: 1px solid #999;background-color: #efefef;heigth:74%">
-         <!-- Header row -->
-         <div class="row" style="padding-left: 0; padding-right: 0;border-bottom: 1px solid #999;background-color: #fff">
-            <div class="col-5" *ngIf="userTwoData" style="color:darkblue;line-height: 50px;">{{userTwoData.firstName}} {{userTwoData.lastName}}</div>
-            <div class="col-7" style="text-align: right" *ngIf="productData">
-               <div class="row" style="padding-right: 0">
-                  <div class="col-8" style="padding-right: 0; font-size: 14px;line-height: 24px;">
-                     {{productData.title}}
-                     <br>{{productData.price | currency:'EUR':'symbol-narrow'}}
-                  </div>
-                  <div class="col-4" style="padding-right: 0">
-                     <!-- <button mat-icon-button style="float:right;">
-                        <mat-icon aria-label="Icon-button with a heart icon">menu</mat-icon>
-                     </button> -->
-                     <img [src]="productData.images[0].url" style="float:right;height: 50px;">
-                  </div>
-               </div>
-            </div>
-         </div>
-         <div class="row" style="overflow-y: scroll; margin-bottom: 35px;">
-            <div class="col-12" >
-               <div *ngFor="let chat of chatMessage;let i = index">
-                  <div style="text-align: center;" class="chat-date" *ngIf="i === 0 || 
-                  (chat.sendDate | date: 'dd MMMM yyyy') !== 
-                  (chatMessage[i-1].sendDate | date: 'dd MMMM yyyy')">{{chat.sendDate | date: 'dd MMMM yyyy'}}</div>
-                  <div [ngClass]="{ 'chat-other': (currentUser!==chat.user), 'chat-mine':  (currentUser===chat.user) }">
-                     {{chat.message}}
-                  </div>
-               </div>
-               <div id="myFakeLabel">&nbsp;</div>
-            </div>
-         </div>
-         <div class="row" style="height: 41px; padding-top: 4px;position: absolute;right:0;bottom:0;left:0;background-color: #fff;margin:0 auto;border-top: 1px solid #999;">
-            <div class="col-12">
-               <div style=" padding-top: 3px; ">
-                  <input #msg type="text " placeholder="Nachricht schreiben... ">
-                  <button style="float:right; " class="btn btn-sm btn-success " (click)="postMessage(msg.value); msg.value='' ">
-                     SENDEN
+            <div *ngFor="let chatDetail of allChatList;let i = index" style="border-bottom:1px solid #999" class="chat-detail">
+               <img [src]="chatDetail.productImg" class="img-avatar" (click)="openChat(i)">
+               <div style="height: 55px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" (click)="openChat(i)">
+                  <span style="color:darkblue"> {{chatDetail.userName}} </span>
+                  <br> {{chatDetail.productTitle}}
+                  <button mat-icon-button (click)="deleteChat(i)" class="delete-chat">
+                     <mat-icon>delete_forever</mat-icon>
                   </button>
                </div>
             </div>
          </div>
       </div>
-      <div class="col-2 ">
+      <div class="col-7 col-md-7 col-sm-12 main-content">
+         <!-- Header row -->
+         <div class="header">
+            <div class="row header-row">
+               <div class="col-5" *ngIf="userTwoData" style="color:darkblue;">{{userTwoData.firstName}} {{userTwoData.lastName}}</div>
+               <div class="col-7" style="text-align: right" *ngIf="productData">
+                  <div class="row" style="padding-right: 0">
+                     <div class="col-8" style="padding-right: 0; font-size: 14px;line-height: 24px;">
+                        {{productData.title}}
+                        <br>{{productData.price | currency:'EUR':'symbol-narrow'}}
+                     </div>
+                     <div class="col-4" style="padding-right: 0">
+                        <img [src]="productData.images[0].url" style="float:right;height: 50px;">
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+         <div class="chat-content" #scrollMe>
+            <div *ngFor="let chat of chatMessage;let i = index">
+               <div style="text-align: center;" class="chat-date" *ngIf="i === 0 || 
+                  (chat.sendDate | date: 'dd MMMM yyyy') !== 
+                  (chatMessage[i-1].sendDate | date: 'dd MMMM yyyy')">{{chat.sendDate | date: 'dd MMMM yyyy'}}</div>
+               <div [ngClass]="{ 'chat-other': (currentUser!==chat.user), 'chat-mine':  (currentUser===chat.user) }">
+                  {{chat.message}}
+               </div>
+            </div>
+         </div>
+         <div class="footer">
+            <div style=" padding-top: 3px; ">
+               <textarea #msg type="text" placeholder="Nachricht schreiben..." id="scrollHere"></textarea>
+               <button style="margin-bottom: 30px; margin-left: 5px;" class="btn btn-sm btn-success" (click)="postMessage(msg.value); msg.value=''">
+                  SENDEN
+               </button>
+            </div>
+         </div>
+      </div>
+      <div class="col-2" style="border-bottom: 1px solid #999">
          <!-- Update or accept offer -->
          <!-- Offers -->
       </div>
    </div>
    <ng-template #noChatHistory>
-         <loading-spinner></loading-spinner>
+      <loading-spinner></loading-spinner>
    </ng-template>
 </div>
