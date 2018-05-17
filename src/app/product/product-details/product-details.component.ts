@@ -1,3 +1,4 @@
+
 import { take } from 'rxjs/operators';
 import { Component, OnInit, ViewEncapsulation, ViewChild } from '@angular/core';
 import { ReactiveFormsModule, FormGroup, FormBuilder, Validators } from '@angular/forms';
@@ -5,6 +6,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument } from 'angularfire2/firestore';
 import { ProductService } from '../shared/product.service';
 import { NotifyService } from '../../core/notify.service';
+import { MessageService } from '../../message/shared/message.service';
 import { product } from '../shared/product';
 import { Upload } from '../shared/upload';
 import { database } from 'firebase';
@@ -21,6 +23,7 @@ declare let navigator: any;
 })
 export class ProductDetailsComponent implements OnInit {
    @ViewChild('imgSlider') _imgSlider: any;
+   chatsCollection: AngularFirestoreCollection<any>;
    product: product;
    productLocation: any;
    customWidth: number;
@@ -50,8 +53,8 @@ export class ProductDetailsComponent implements OnInit {
       'price': { 'required': 'Please enter offer price' },
    };
    // tslint:disable-next-line:max-line-length
-   constructor(private router: Router, private route: ActivatedRoute, private productService: ProductService, private afs: AngularFirestore, private fb: FormBuilder, private notify: NotifyService) {
-
+   constructor(private router: Router, private route: ActivatedRoute, private productService: ProductService, private afs: AngularFirestore, private fb: FormBuilder, private notify: NotifyService, private messageService: MessageService) {
+      this.chatsCollection = this.afs.collection('chats', (ref) => ref.limit(5));
    }
 
    ngOnInit() {
@@ -133,8 +136,6 @@ export class ProductDetailsComponent implements OnInit {
       }
    }
 
-
-
    gotoProductImg(index: any) {
       this._imgSlider.goToSlide(index);
    }
@@ -207,17 +208,24 @@ export class ProductDetailsComponent implements OnInit {
    getMyOffers() {
       const getMyOffers = this.productService.getOffers(this.productId).subscribe((resp: any) => {
          this.Offers = resp;
-         this.getOfferUserDetails(this.Offers.userId);
+         const offer = {
+            accepted: this.Offers.accepted,
+            created: this.Offers.created,
+            lastUpdated: this.Offers.lastUpdated,
+            price: this.Offers.price,
+            productId: this.Offers.productId,
+            text: this.Offers.text,
+            userTwoId: this.Offers.userId,
+            photoURL: '',
+            firstName: '',
+            lastName: '',
+            userOneId: this.uid,
+            // productImg: this.product.images[0].url,
+            // productTitle: this.product.title,
+            // productPrice: this.product.price,
+         };
+         this.getOfferUserDetails(offer);
          // getMyOffers.unsubscribe();
-      });
-   }
-
-   // get all offers using user id
-   getOwnerOffers() {
-      const getOwnerOffers = this.productService.getOwnerOffers(this.productId).subscribe((resp: any) => {
-         this.Offers = resp;
-         this.getOfferUserDetails(this.Offers.userId);
-         // getOwnerOffers.unsubscribe();
       });
    }
 
@@ -244,13 +252,16 @@ export class ProductDetailsComponent implements OnInit {
    }
 
    // get user details like name profile images using user id for offer list
-   getOfferUserDetails(userId: any) {
-      this.afs.collection('users').doc(userId)
+   getOfferUserDetails(offer: any) {
+      this.afs.collection('users').doc(offer.userTwoId)
          .ref
          .get().then((doc) => {
             if (doc.exists) {
-               this.user = doc.data();
-               this.offersBy.push(this.user);
+               const user = doc.data();
+               offer.photoURL = user.photoURL;
+               offer.firstName = user.firstName;
+               offer.lastName = user.lastName;
+               this.offersBy.push(offer);
             } else {
                // doc.data() will be undefined in this case
                console.log('No such document!');
@@ -261,5 +272,35 @@ export class ProductDetailsComponent implements OnInit {
    // On click on buttton scroll to offer or quetion form.
    scroll(elementId: any) {
       elementId.scrollIntoView({ behavior: 'smooth' });
+   }
+
+   openChat(index: any) {
+      // tslint:disable-next-line:max-line-length
+      this.chatsCollection.ref.where('productId', '==', this.offersBy[index].productId).where('userOneId', '==', this.offersBy[index].userOneId).where('userTwoId', '==', this.offersBy[index].userTwoId).get().then((snapshot) => {
+         if (snapshot.size <= 0) {
+            const charRoom = {
+               productId: this.offersBy[index].productId,
+               userOneId: this.offersBy[index].userOneId,
+               userTwoId: this.offersBy[index].userTwoId,
+            };
+            this.messageService.createChat(charRoom).subscribe((data) => {
+               this.messageService._currentChat = data;
+            });
+         } else {
+            const chatData = {
+               productId: this.offersBy[index].productId,
+               userOneId: this.offersBy[index].userOneId,
+               userTwoId: this.offersBy[index].userTwoId,
+               chatId: '',
+            };
+            snapshot.forEach((respDoc) => {
+               if (respDoc.exists) {
+                  chatData.chatId = respDoc.id;
+               }
+            });
+            this.messageService._currentChat = chatData;
+         }
+         this.router.navigate(['/message']);
+      }).catch((error) => console.log('error! ---- ', error));
    }
 }

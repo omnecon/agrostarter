@@ -13,9 +13,11 @@ import { HttpClient, HttpHeaders, HttpParams, HttpResponse } from '@angular/comm
 
 @Injectable()
 export class ProductService {
+   currentOffer: any;
    private headers: HttpHeaders = new HttpHeaders();
    private response: HttpResponse<any>;
    private _product: Subject<any> = new Subject<any>();
+   private _productList: Subject<any> = new Subject<any>();
    private _imgUpload: Subject<any> = new Subject<any>();
    private _allProducts: Subject<any[]> = new Subject<any[]>();
    private _allDraftProducts: Subject<any[]> = new Subject<any[]>();
@@ -87,7 +89,6 @@ export class ProductService {
    }
 
    getAllDraftProduct(uid: any) {
-      console.log('this.uid  == ', this.uid);
       // tslint:disable-next-line:max-line-length
       this.productsCollection.ref.where('userId', '==', uid).where('status', '==', 'default').get().then((snapshot) => {
          const allProd: any = [];
@@ -149,21 +150,22 @@ export class ProductService {
    }
 
    getAllSoldProduct(uid: any) {
-      this.productsCollection.ref.where('userId', '==', uid).where('status', '==', 'sold').get().then((snapshot) => {
-         const allProd: any = [];
-         snapshot.forEach((doc) => {
-            if (doc.exists) {
-               const singleProd = doc.data();
-               singleProd.pid = doc.id;
-               allProd.push(singleProd);
-            } else {
-               // doc.data() will be undefined in this case
-               console.log('No such document!');
-            }
-            this._allSoldProducts.next(allProd);
+      this.productsCollection.ref.where('userId', '==', uid).where('status', '==', 'sold').get()
+         .then((snapshot) => {
+            const allProd: any = [];
+            snapshot.forEach((doc) => {
+               if (doc.exists) {
+                  const singleProd = doc.data();
+                  singleProd.pid = doc.id;
+                  allProd.push(singleProd);
+               } else {
+                  // doc.data() will be undefined in this case
+                  console.log('No such document!');
+               }
+               this._allSoldProducts.next(allProd);
 
-         });
-      }).catch((error) => this.handleError(error));
+            });
+         }).catch((error) => this.handleError(error));
       return this._allSoldProducts.asObservable();
    }
 
@@ -179,11 +181,22 @@ export class ProductService {
       return this._product.asObservable();
    }
 
+   getProductList(id: string) {
+      this.afs.collection('products').doc(id).ref.get().then((doc) => {
+         if (doc.exists) {
+            this._productList.next(doc.data());
+         } else {
+            // doc.data() will be undefined in this case
+            console.log('No such document!');
+         }
+      }).catch((error) => this.handleError(error));
+      return this._productList.asObservable();
+   }
+
    getOffers(pid: string) {
-      this.offersCollection.ref.where('productId', '==', pid).where('userId', '==', this.uid).get().then((snapshot) => {
+      this.offersCollection.ref.where('productId', '==', pid).get().then((snapshot) => {
          snapshot.forEach((doc) => {
             if (doc.exists) {
-               console.log('doc.data() === ', doc.data());
                this._offers.next(doc.data());
             } else {
                // doc.data() will be undefined in this case
@@ -194,10 +207,9 @@ export class ProductService {
       return this._offers.asObservable();
    }
    getOwnerOffers(pid: string) {
-      this.offersCollection.ref.where('productId', '==', pid).get().then((snapshot) => {
+      this.offersCollection.ref.where('productId', '==', pid).where('userId', '==', this.uid).get().then((snapshot) => {
          snapshot.forEach((doc) => {
             if (doc.exists) {
-               console.log('doc.data() === ', doc.data());
                this._offersOwner.next(doc.data());
             } else {
                // doc.data() will be undefined in this case
@@ -217,13 +229,7 @@ export class ProductService {
 
    editProduct(productData: product) {
       const id = productData.pid;
-      console.log('id   ==', id);
-      console.log('productData   ==', productData);
-      // this.prodDoc = this.afs.doc<product>(`products/${productData.pid}`);
-      // this.userDoc.update(productData);
       this.afs.collection('products').doc(id).update(productData).then((data) => {
-         console.log('data  == ', data);
-         // productData.pid = data.id;
          this._product.next(productData);
       }).catch((error) => this.handleError(error));
       return this._product.asObservable();

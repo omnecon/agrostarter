@@ -50,10 +50,11 @@
          <h3>Offers</h3>
          <hr>
          <span *ngIf="offersBy?.length>0">
-            <div *ngFor="let user of offersBy">
-               <img [src]="user.photoURL" (error)="'assets/profile/profile-images.jpg'" class="sm-img-avatar" />
+            <div *ngFor="let offer of offersBy; let i = index">
+               <img [src]="offer.photoURL" (error)="'assets/profile/profile-images.jpg'" class="sm-img-avatar" />
                <p style="line-height: 50px; font-size: 14px">
-                  {{user.firstName}} {{user.lastName}} has made an offer
+                  {{offer.firstName}} {{offer.lastName}} has made an offer
+                  <button mat-raised-button color="accent" type="button" class="btn btn-sm" (click)="openChat(i)" [disabled]="offer.userOneId === offer.userTwoId">Chat</button>
                </p>
             </div>
          </span>

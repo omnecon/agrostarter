@@ -1,0 +1,69 @@
+.chat-detail {
+        font-size: 12px;
+        float: left;
+        margin: 5px 0 0 0;
+}
+
+.img-avatar {
+        width: 50px;
+        border: 1px solid #ccc;
+        padding: 3px;
+        background-color: #fff;
+        height: 50px;
+        margin-right: 3px;
+        float: left;
+        img {
+                height: 44px;
+                width: 44px;
+        }
+}
+
+input {
+        border: 0;
+        width: 80%;
+        height: 100%;
+}
+
+.chat-mine {
+        max-width: 75%;
+        color: #fff;
+        border-radius: 5px 5px 0 5px;
+        background-color: cornflowerblue;
+        float: right;
+        margin-top: 2px;
+        margin-bottom: 10px;
+        padding: 10px;
+        font-size: 14px;
+        clear: both;
+        word-wrap: break-word;
+}
+
+.chat-other {
+        max-width: 75%;
+        color: #555;
+        border-radius: 5px 5px 5px 0;
+        background-color: #fff;
+        float: left;
+        margin-top: 2px;
+        margin-bottom: 10px;
+        padding: 10px;
+        font-size: 14px;
+        clear: both;
+        word-wrap: break-word;
+}
+
+.chat-date {
+        color: #555;
+        margin: 5px;
+        font-size: 12px;
+        clear: both;
+        text-align: center;
+        background-color: #d7d7d7;
+        width: 150px;
+        margin: 5px auto;
+        border-radius: 10px;
+}
+
+.delete-chat {
+        float: right;
+}

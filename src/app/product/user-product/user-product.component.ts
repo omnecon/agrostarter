@@ -15,9 +15,7 @@ export class UserProductComponent implements OnInit {
    allWishProduct: any = [];
    allSoldProduct: any = [];
    uid: any;
-   constructor(private router: Router, private productService: ProductService, private route: ActivatedRoute) {
-
-   }
+   constructor(private router: Router, private productService: ProductService, private route: ActivatedRoute) { }
    ngOnInit() {
       const newUser: any = JSON.parse(window.localStorage.getItem('user'));
       if (newUser) {
@@ -27,7 +25,6 @@ export class UserProductComponent implements OnInit {
       }
       this.getAllDraftProduct();
       this.getAllPublishProduct();
-      this.getAllWishProduct();
       this.getAllSoldProduct();
    }
 
@@ -45,13 +42,6 @@ export class UserProductComponent implements OnInit {
       });
    }
 
-   // Get all Wishlist Products
-   getAllWishProduct() {
-      this.productService.getAllWishProduct(this.uid).subscribe((data: any) => {
-         this.allWishProduct = data;
-      });
-   }
-
    // Get all Sold Products
    getAllSoldProduct() {
       this.productService.getAllSoldProduct(this.uid).subscribe((data: any) => {
@@ -60,7 +50,6 @@ export class UserProductComponent implements OnInit {
    }
 
    editProduct(pid: any) {
-      console.log('pid === ', pid);
       this.router.navigate(['/product', { productId: pid }]);
    }
 
@@ -76,7 +65,6 @@ export class UserProductComponent implements OnInit {
 
    // Redict to product detail page on click of product
    openProductDetailPage(pid: any) {
-      console.log('pid 000000000 ', pid);
       this.router.navigate(['/product-details', { productId: pid }]);
    }
 }
