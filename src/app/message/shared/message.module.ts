@@ -10,7 +10,8 @@ import { SharedModule } from '../../shared/shared.module';
 
 import { MessageService } from './message.service';
 
-import { MessagePageComponent } from '../message-page.component';
+import { MessagePageComponent } from '../message-details/message-page.component';
+import { MessageListComponent } from '../message-list/message-list.component';
 
 @NgModule({
    imports: [
@@ -24,6 +25,7 @@ import { MessagePageComponent } from '../message-page.component';
    ],
    declarations: [
       MessagePageComponent,
+      MessageListComponent,
    ],
    providers: [
       MessageService,

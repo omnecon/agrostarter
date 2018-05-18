@@ -305,7 +305,7 @@ export class ProductPageComponent implements OnInit, OnDestroy {
          this.imageSources = this.imageSources.filter((item) => item.$key !== currentImgData.$key);
          const index = this.imageSources.indexOf(currentImgData);
          this.productService.deleteUpload(currentImgData).subscribe((data) => {
-            console.log('deleted image === ', data);
+            // console.log('deleted image === ', data);
          });
       } else {
          console.log('You pressed Cancel!');

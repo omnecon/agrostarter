@@ -148,9 +148,10 @@ export class ProductDetailsComponent implements OnInit {
       this.productService.getProduct(this.productId).subscribe((resp: product) => {
          this.product = resp;
          this.checkImageExistance();
-         if (this.product.status === 'wishlist') {
+         if (this.product.status === 'wishlist' && this.product.userId === this.uid) {
             this.isWishlisted = true;
          }
+         // console.log('this.product  == ', this.product);
       });
    }
 
@@ -224,12 +225,8 @@ export class ProductDetailsComponent implements OnInit {
             firstName: '',
             lastName: '',
             userOneId: this.uid,
-            // productImg: this.product.images[0].url,
-            // productTitle: this.product.title,
-            // productPrice: this.product.price,
          };
          this.getOfferUserDetails(offer);
-         // getMyOffers.unsubscribe();
       });
    }
 
@@ -271,6 +268,28 @@ export class ProductDetailsComponent implements OnInit {
                console.log('No such document!');
             }
          });
+   }
+
+   // add to wishlist
+   addToWishlist() {
+      const data = {
+         price: this.product.price,
+         productLocation: this.product.productLocation,
+         text: this.product.text,
+         title: this.product.title,
+         userId: this.uid,
+         categories: this.product.categories,
+         images: this.product.images,
+         location: this.product.location,
+         status: 'wishlist',
+      };
+
+      const addprodSubscription = this.productService.createProduct(data).subscribe((resp: product) => {
+         this.isWishlisted = true;
+         this.notify.update('Product added to wishlist successfully', 'success');
+         this.router.navigate(['/user-product']);
+         addprodSubscription.unsubscribe();
+      });
    }
 
    // On click on buttton scroll to offer or quetion form.

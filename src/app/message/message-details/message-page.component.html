@@ -1,0 +1,61 @@
+<div class="container">
+   <div class="row main-row">
+      <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3 side-list">
+         Offers
+      </div>
+      <div class="col-xs-12 col-sm-12 col-md-9 col-lg-9 main-content">
+         <!-- Header row -->
+         <div class="header">
+            <div class="row header-row">
+               <div class="col-5 header-username" *ngIf="userTwoData">{{userTwoData.firstName}} {{userTwoData.lastName}}</div>
+               <div class="col-7" style="text-align: right" *ngIf="productData">
+                  <div class="row" style="padding-right: 0">
+                     <div class="col-8" style="padding-right: 0; font-size: 14px;line-height: 24px;">
+                        {{productData.title}}
+                        <br>{{productData.price | currency:'EUR':'symbol-narrow'}}
+                     </div>
+                     <div class="col-4" style="padding-right: 0">
+                        <img [src]="productData.images[0].url" style="float:right;height: 50px;">
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+         <div class="chat-content" #scrollMe>
+            <div *ngFor="let chat of chatMessage;let i = index">
+               <div style="text-align: center;" class="chat-date" *ngIf="i === 0 || 
+                  (chat.sendDate | date: 'dd MMMM yyyy') !== 
+                  (chatMessage[i-1].sendDate | date: 'dd MMMM yyyy')">{{chat.sendDate | date: 'dd MMMM yyyy'}}</div>
+               <div *ngIf="i === 0 || 
+               (chat.sendDate | date: 'shortTime') !== 
+               (chatMessage[i-1].sendDate | date: 'shortTime')" [ngClass]="{ 'time-other': (currentUser!==chat.user), 'time-mine':  (currentUser===chat.user) }">
+                  <div *ngIf="userTwoData && (currentUser!==chat.user); else mineChat">
+                     <img [src]="userTwoData.photoURL" class="sm-img-avatar" onError="this.src='assets/images/no_image_available.jpeg';">
+                     <span>{{chat.sendDate | date: 'shortTime'}}
+                        <br> {{userTwoData.firstName}} {{userTwoData.lastName}}
+                     </span>
+                  </div>
+                  <ng-template #mineChat>
+                     <span>{{chat.sendDate | date: 'shortTime'}}
+                     </span>
+                  </ng-template>
+               </div>
+               <div [ngClass]="{ 'chat-other': (currentUser!==chat.user), 'chat-mine':  (currentUser===chat.user) }" [innerHTML]="getFormatedMessage(chat.message)">
+               </div>
+            </div>
+         </div>
+         <div class="my-footer">
+            <div class="input-group">
+               <textarea class="form-control custom-control" rows="2" #msg style="resize:none" placeholder="Nachricht schreiben..." id="scrollHere" style="padding-left:0"></textarea>
+               <span class="input-group-addon btn btn-success" mat-icon-button (click)="postMessage(msg.value); msg.value=''">
+                  <mat-icon style="padding-top: 13px">send</mat-icon>
+               </span>
+               <!-- SENDEN -->
+            </div>
+         </div>
+      </div>
+   </div>
+   <ng-template #noChatHistory>
+      <loading-spinner></loading-spinner>
+   </ng-template>
+</div>

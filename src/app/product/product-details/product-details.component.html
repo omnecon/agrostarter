@@ -1,21 +1,24 @@
 <div class="container" *ngIf="product;else other">
    <div class="row">
-      <div class="col-4">
+      <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4" style="margin-bottom: 10px;">
          <div class="lg-img-box">
             <slideshow [minHeight]="'200px'" [autoPlay]="true" [showArrows]="true" [imageUrls]="productImg" [lazyLoad]="productImg?.length > 1" [autoPlayWaitForLazyLoad]="true" *ngIf="productImg?.length >= 1" #imgSlider>
             </slideshow>
          </div>
          <br>
-         <div *ngFor="let image of productImg;let i = index">
-            <img [src]="image.url" class="sm-img-box1" onError="this.src='assets/images/no_image_available.jpeg';" style="width:22%" (click)="gotoProductImg(i)">
+         <div class="row">
+            <div class="col-3" *ngFor="let image of productImg;let i = index" style="padding-left:5px;padding-right:5px;">
+               <img [src]="image.url" class="sm-img-box1" onError="this.src='assets/images/no_image_available.jpeg';" (click)="gotoProductImg(i)">
+            </div>
          </div>
       </div>
-      <div class="col-8">
+      <div class="col-xs-12 col-sm-12 col-md-8 col-lg-8">
          <div class="row" [hidden]="!userLogin">
             <div class="col-6">
                <h3>{{product.title}}</h3>
             </div>
             <div class="col-6">
+               <!-- <button mat-raised-button color="accent" class="btn btn-lg" [disabled]="isWishlisted" (click)="addToWishlist()" style="float: right;">Add to wishllist</button> -->
             </div>
          </div>
          <p>
@@ -39,14 +42,14 @@
                <button mat-raised-button color="accent" class="btn btn-lg" (click)="scroll(offer)">Make an offers</button>
             </div>
             <div class="col-6">
-               <button mat-raised-button color="accent" class="btn btn-lg" (click)="scroll(question)">Ask a questions</button>
+               <button mat-raised-button color="accent" class="btn btn-lg" (click)="scroll(question)" style="float: right;">Ask a questions</button>
             </div>
          </div>
       </div>
    </div>
    <br>
    <div class="row">
-      <div class="col-6">
+      <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
          <h3>Offers</h3>
          <hr>
          <span *ngIf="offersBy?.length>0">
@@ -74,7 +77,7 @@
             <button mat-raised-button color="accent" type="submit" class="btn btn-sm" [disabled]="!offersForm.valid">Add</button>
          </form>
       </div>
-      <div class="col-6">
+      <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
          <h3>Questions</h3>
          <hr>
          <span *ngIf="questionsBy?.length>0">

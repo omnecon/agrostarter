@@ -1,0 +1,25 @@
+<div class="container">
+   <div class="row main-row" *ngIf="allChatList?.length>0;else noChatHistory">
+      <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 side-list">
+         <div *ngIf="allChatList">
+            <div class="row" *ngFor="let chatDetail of allChatList;let i = index" style="margin-right:0;margin-left: 0;border-bottom:1px solid #ccc;padding:5px">
+               <div class="col-9">
+                  <img [src]="chatDetail.productImg" class="img-avatar" (click)="openChat(i)">
+                  <div style=" white-space: nowrap; overflow: hidden; text-overflow: ellipsis;font-size:1em;text-transform: capitalize;" (click)="openChat(i)">
+                     <span style="color:darkblue;"> {{chatDetail.userName}} </span>
+                     <br> {{chatDetail.productTitle}}
+                  </div>
+               </div>
+               <div class="col-3">
+                  <button mat-icon-button (click)="deleteChat(i)" class="delete-chat">
+                     <mat-icon>delete_forever</mat-icon>
+                  </button>
+               </div>
+            </div>
+         </div>
+      </div>
+   </div>
+   <ng-template #noChatHistory>
+      <loading-spinner></loading-spinner>
+   </ng-template>
+</div>

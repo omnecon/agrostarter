@@ -10,7 +10,8 @@ import { ItemsListComponent } from './items/items-list/items-list.component';
 import { HomePageComponent } from './home/home-page.component';
 
 import { NotesListComponent } from './notes/notes-list/notes-list.component';
-import { MessagePageComponent } from './message/message-page.component';
+import { MessagePageComponent } from './message/message-details/message-page.component';
+import { MessageListComponent } from './message/message-list/message-list.component';
 import { UploadsListComponent } from './uploads/uploads-list/uploads-list.component';
 import { ProductPageComponent } from './product/product-form/product-page.component';
 import { UserProductComponent } from './product/user-product/user-product.component';
@@ -31,6 +32,8 @@ const routes: Routes = [
    { path: 'user-product', component: UserProductComponent, canActivate: [AuthGuard] },
    { path: 'product-details', component: ProductDetailsComponent },
    { path: 'message', component: MessagePageComponent, canActivate: [AuthGuard] },
+   { path: 'message-list', component: MessageListComponent, canActivate: [AuthGuard] },
+
    // { path: 'items', component: ItemsListComponent, canActivate: [AuthGuard] },
    // uploads are lazy loaded
    { path: 'uploads', loadChildren: './uploads/shared/upload.module#UploadModule', canActivate: [AuthGuard] },
