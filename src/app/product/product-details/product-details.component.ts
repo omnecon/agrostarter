@@ -42,6 +42,7 @@ export class ProductDetailsComponent implements OnInit {
    questionsForm: FormGroup;
    question: Array<any> = [];
    productImg: Array<any> = [];
+   chatData: any;
    formErrors: FormQueErrors = {
       'que': '',
    };
@@ -308,6 +309,7 @@ export class ProductDetailsComponent implements OnInit {
             };
             this.messageService.createChat(charRoom).subscribe((data) => {
                this.messageService._currentChat = data;
+               this.router.navigate(['/message', data]);
             });
          } else {
             const chatData = {
@@ -322,8 +324,8 @@ export class ProductDetailsComponent implements OnInit {
                }
             });
             this.messageService._currentChat = chatData;
+            this.router.navigate(['/message', chatData]);
          }
-         this.router.navigate(['/message']);
       }).catch((error) => console.log('error! ---- ', error));
    }
 
