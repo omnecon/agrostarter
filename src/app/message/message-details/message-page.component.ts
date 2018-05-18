@@ -49,7 +49,6 @@ export class MessagePageComponent implements OnInit {
             this.chatMessage = data;
             this.scrollToBottom();
          });
-         this.getMessages();
       });
    }
 
