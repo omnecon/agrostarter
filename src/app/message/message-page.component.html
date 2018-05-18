@@ -1,11 +1,11 @@
 <div class="container">
-   <div class="row" *ngIf="allChatList?.length>0;else noChatHistory" style="border-left:1px solid #999;border-top:1px solid #999;border-right:1px solid #999;">
-      <div class="col-3 col-md-3 col-sm-12" style="padding-right: 0;padding-left: 0;border-bottom: 1px solid #999;">
+   <div class="row main-row" *ngIf="allChatList?.length>0;else noChatHistory">
+      <div class="col-3 col-md-3 col-sm-12 side-list">
          <div *ngIf="allChatList">
-            <div *ngFor="let chatDetail of allChatList;let i = index" style="border-bottom:1px solid #999" class="chat-detail">
+            <div *ngFor="let chatDetail of allChatList;let i = index" class="chat-detail">
                <img [src]="chatDetail.productImg" class="img-avatar" (click)="openChat(i)">
                <div style="height: 55px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" (click)="openChat(i)">
-                  <span style="color:darkblue"> {{chatDetail.userName}} </span>
+                  <span style="color:darkblue;"> {{chatDetail.userName}} </span>
                   <br> {{chatDetail.productTitle}}
                   <button mat-icon-button (click)="deleteChat(i)" class="delete-chat">
                      <mat-icon>delete_forever</mat-icon>
@@ -18,7 +18,7 @@
          <!-- Header row -->
          <div class="header">
             <div class="row header-row">
-               <div class="col-5" *ngIf="userTwoData" style="color:darkblue;">{{userTwoData.firstName}} {{userTwoData.lastName}}</div>
+               <div class="col-5 header-username" *ngIf="userTwoData">{{userTwoData.firstName}} {{userTwoData.lastName}}</div>
                <div class="col-7" style="text-align: right" *ngIf="productData">
                   <div class="row" style="padding-right: 0">
                      <div class="col-8" style="padding-right: 0; font-size: 14px;line-height: 24px;">
@@ -51,9 +51,9 @@
             </div>
          </div>
       </div>
-      <div class="col-2" style="border-bottom: 1px solid #999">
+      <div class="col-2 col-md-2 col-sm-12" style="border-bottom: 1px solid #999">
          <!-- Update or accept offer -->
-         <!-- Offers -->
+         Offers
       </div>
    </div>
    <ng-template #noChatHistory>

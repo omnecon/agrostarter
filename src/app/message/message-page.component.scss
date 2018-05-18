@@ -3,11 +3,14 @@
         float: left;
         margin: 5px 0 0 0;
         width: 100%;
+        border-bottom: 1px solid #999;
 }
 
 .img-avatar {
         width: 50px;
-        border: 1px solid #ccc;
+        border-bottom: 1px solid #999;
+        border-right: 1px solid #999;
+        border-top: 1px solid #999;
         padding: 3px;
         background-color: #fff;
         height: 50px;
@@ -91,14 +94,12 @@ textarea {
 }
 
 .chat-content {
-        //   height: calc(100% - 155px);
         overflow-y: scroll;
         min-height: 155px;
         max-height: 350px;
 }
 
 .footer {
-        //   position: absolute;
         bottom: 0;
         height: 45px;
         width: 100%;
@@ -106,4 +107,22 @@ textarea {
         background-color: #fff;
         margin: 0 auto;
         border-top: 1px solid #999;
+}
+
+.main-row {
+        border-left: 1px solid #999;
+        border-top: 1px solid #999;
+        border-right: 1px solid #999;
+}
+
+.side-list {
+        padding-right: 0;
+        padding-left: 0;
+        border-bottom: 1px solid #999;
+}
+
+.header-username {
+        color: darkblue;
+        margin: auto;
+        width: 50%;
 }

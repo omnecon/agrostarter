@@ -10,6 +10,7 @@ import { MessageService } from '../../message/shared/message.service';
 import { product } from '../shared/product';
 import { Upload } from '../shared/upload';
 import { database } from 'firebase';
+import * as firebase from 'firebase';
 type QueFields = 'que';
 type FormQueErrors = { [q in QueFields]: string };
 type offerFields = 'desc' | 'price';
@@ -24,6 +25,7 @@ declare let navigator: any;
 export class ProductDetailsComponent implements OnInit {
    @ViewChild('imgSlider') _imgSlider: any;
    chatsCollection: AngularFirestoreCollection<any>;
+   imgbasePath = 'user-products-imgs';
    product: product;
    productLocation: any;
    customWidth: number;
@@ -36,10 +38,10 @@ export class ProductDetailsComponent implements OnInit {
    Offers: any;
    offersForm: FormGroup;
    offersBy: Array<any> = [];
-
    questionsBy: Array<any> = [];
    questionsForm: FormGroup;
    question: Array<any> = [];
+   productImg: Array<any> = [];
    formErrors: FormQueErrors = {
       'que': '',
    };
@@ -58,6 +60,7 @@ export class ProductDetailsComponent implements OnInit {
    }
 
    ngOnInit() {
+
       this.currentUser = JSON.parse(window.localStorage.getItem('user'));
       if (this.currentUser) {
          this.uid = this.currentUser.uid;
@@ -144,6 +147,7 @@ export class ProductDetailsComponent implements OnInit {
    getProduct() {
       this.productService.getProduct(this.productId).subscribe((resp: product) => {
          this.product = resp;
+         this.checkImageExistance();
          if (this.product.status === 'wishlist') {
             this.isWishlisted = true;
          }
@@ -303,4 +307,21 @@ export class ProductDetailsComponent implements OnInit {
          this.router.navigate(['/message']);
       }).catch((error) => console.log('error! ---- ', error));
    }
+
+   checkImageExistance() {
+      const storageRef = firebase.storage().ref();
+      this.productImg = [];
+      for (let i = 0, len = this.product.images.length; i < len; i++) {
+         const imagesRef = storageRef.child(`${this.product.images[i].url}`);
+         let filename = decodeURI(imagesRef.name);
+         filename = (filename.split('/').pop().split('#')[0].split('?')[0]).replace(`${this.imgbasePath}%2F`, '');
+         storageRef.child(`${this.imgbasePath}/${filename}`).getDownloadURL().then(
+            (foundURL: any) => {
+               this.productImg.push(this.product.images[i]);
+            }, (error: any) => {
+               console.log('error.code === ', error);
+            });
+      }
+   }
+
 }

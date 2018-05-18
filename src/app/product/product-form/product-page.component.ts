@@ -7,6 +7,7 @@ import { NotifyService } from '../../core/notify.service';
 import { product } from '../shared/product';
 import { Upload } from '../shared/upload';
 import { Observable } from 'rxjs/Observable';
+import * as firebase from 'firebase';
 import { Router, ActivatedRoute } from '@angular/router';
 type ProductFields = 'title' | 'desc' | 'location' | 'category' | 'price';
 type FormProfileErrors = { [p in ProductFields]: string };
@@ -20,6 +21,7 @@ type FormProfileErrors = { [p in ProductFields]: string };
 export class ProductPageComponent implements OnInit, OnDestroy {
    @ViewChild('inputFile') _inputFile: any;
    @ViewChild('category') _category: HTMLElement;
+   imgbasePath = 'user-products-imgs';
    selectedFiles: FileList | null;
    currentUpload: Upload;
    uploads: Observable<Upload[]>;
@@ -85,7 +87,7 @@ export class ProductPageComponent implements OnInit, OnDestroy {
             this.productForm.get('price').setValue(this.product.price);
             this.productForm.get('status').setValue(this.product.status);
             this.clickOnCategory();
-            this.imageSources = this.product.images;
+            this.checkImageExistance();
          });
       } else {
          this.productForm = this.fb.group({
@@ -338,6 +340,22 @@ export class ProductPageComponent implements OnInit, OnDestroy {
             this.longitude = location.lng;
          }
       });
+   }
+
+   checkImageExistance() {
+      const storageRef = firebase.storage().ref();
+      this.imageSources = [];
+      for (let i = 0, len = this.product.images.length; i < len; i++) {
+         const imagesRef = storageRef.child(`${this.product.images[i].url}`);
+         let filename = decodeURI(imagesRef.name);
+         filename = (filename.split('/').pop().split('#')[0].split('?')[0]).replace(`${this.imgbasePath}%2F`, '');
+         storageRef.child(`${this.imgbasePath}/${filename}`).getDownloadURL().then(
+            (foundURL: any) => {
+               this.imageSources.push(this.product.images[i]);
+            }, (error: any) => {
+               console.log('error.code === ', error);
+            });
+      }
    }
 
    ngOnDestroy() {

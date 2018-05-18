@@ -2,11 +2,11 @@
    <div class="row">
       <div class="col-4">
          <div class="lg-img-box">
-            <slideshow [minHeight]="'200px'" [autoPlay]="true" [showArrows]="true" [imageUrls]="product.images" [lazyLoad]="product.images?.length > 1" [autoPlayWaitForLazyLoad]="true" *ngIf="product.images?.length >= 1" onError="this.imageUrls='assets/images/no_image_available.jpeg';" #imgSlider>
+            <slideshow [minHeight]="'200px'" [autoPlay]="true" [showArrows]="true" [imageUrls]="productImg" [lazyLoad]="productImg?.length > 1" [autoPlayWaitForLazyLoad]="true" *ngIf="productImg?.length >= 1" #imgSlider>
             </slideshow>
          </div>
          <br>
-         <div *ngFor="let image of product.images;let i = index">
+         <div *ngFor="let image of productImg;let i = index">
             <img [src]="image.url" class="sm-img-box1" onError="this.src='assets/images/no_image_available.jpeg';" style="width:22%" (click)="gotoProductImg(i)">
          </div>
       </div>
