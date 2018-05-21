@@ -102,4 +102,33 @@
          <loading-spinner></loading-spinner>
       </ng-template>
    </mat-tab>
+   <!-- <mat-tab label="Wishlist">
+      <div *ngIf="allWishProduct?.length > 0; else noWishProd">
+         <div *ngFor="let wish of allWishProduct" class="row prod-list" (click)="openProductDetailPage(wish.pid)">
+            <div class="col-3">
+               <img *ngIf="wish.images.length>0;else defaultWishImg" [src]="wish.images[0].url" class="sm-img-box" (error)="this.src='assets/profile/profile-images.jpg'">
+               <ng-template #defaultWishImg>
+                  <img mat-card-image src='assets/images/no_image_available.jpeg'>
+               </ng-template>
+            </div>
+            <div class="col-9" style="padding-right: 20px;padding-top: 5px;padding-left:0px;">
+               <strong>{{wish.title}}</strong>
+               <br> {{wish.text}}
+               <br>
+               <strong>Price: {{wish.price | currency:'EUR':'symbol-narrow'}}</strong>
+               <br>
+               <strong>Categories: </strong>
+               <div *ngFor="let catgory of wish.categories;let i= index">
+                  {{catgory.cat_text}}
+                  <span *ngIf="(i<(wish.categories?.length-1))">,</span>
+               </div>
+            </div>
+         </div>
+      </div>
+      <ng-template #noWishProd>
+         <br>
+         <div class="no-items"> No Wishlist Products.</div>
+         <loading-spinner></loading-spinner>
+      </ng-template>
+   </mat-tab> -->
 </mat-tab-group>

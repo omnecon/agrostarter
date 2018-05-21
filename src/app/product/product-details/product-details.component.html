@@ -21,9 +21,7 @@
                <!-- <button mat-raised-button color="accent" class="btn btn-lg" [disabled]="isWishlisted" (click)="addToWishlist()" style="float: right;">Add to wishllist</button> -->
             </div>
          </div>
-         <p>
-            {{product.text}}
-         </p>
+         <p> {{product.text}} </p>
          <p>
             <strong>Location: {{product.productLocation}}</strong>
          </p>
@@ -32,8 +30,7 @@
          </p>
          <p>
             <strong>Categories: </strong>
-            <span *ngFor="let catgory of product.categories;let i= index">
-               {{catgory.cat_text}}
+            <span *ngFor="let catgory of product.categories;let i= index"> {{catgory.cat_text}}
                <span *ngIf="(i<(product.categories?.length-1))">,</span>
             </span>
          </p>
@@ -57,11 +54,16 @@
                <img [src]="offer.photoURL" (error)="'assets/profile/profile-images.jpg'" class="sm-img-avatar" />
                <p style="line-height: 50px; font-size: 14px">
                   {{offer.firstName}} {{offer.lastName}} has made an offer
-                  <button mat-raised-button color="accent" type="button" class="btn btn-sm" (click)="openChat(i)" [disabled]="offer.userOneId === offer.userTwoId">Chat</button>
+                  <span *ngIf="product.userId === uid">
+                     <button mat-raised-button color="accent" type="button" class="btn btn-sm" (click)="openChat(i, 'chatWithCustomer')">chat with customer</button>
+                  </span>
+                  <span *ngIf="product.userId !== uid">
+                     <button mat-raised-button color="accent" type="button" class="btn btn-sm" (click)="openChat(i,'chatWithSeller')" [hidden]="offer.userTwoId !== uid">chat with seller</button>
+                  </span>
                </p>
             </div>
          </span>
-         <form [formGroup]="offersForm" (ngSubmit)="addOffer()" #offer [hidden]="!userLogin">
+         <form [formGroup]="offersForm" (ngSubmit)="addOffer()" #offer [hidden]="!userLogin || (product.userId === uid)">
             <mat-form-field class="input-full-width">
                <input matInput type="text" id="desc" formControlName="desc" required placeholder="Offer text">
             </mat-form-field>
@@ -90,7 +92,7 @@
                </p>
             </div>
          </span>
-         <form [formGroup]="questionsForm" (ngSubmit)="addQuestion()" #question [hidden]="!userLogin">
+         <form [formGroup]="questionsForm" (ngSubmit)="addQuestion()" #question [hidden]="!userLogin || (product.userId === uid)">
             <mat-form-field class="input-full-width">
                <input matInput type="text" id="que1" formControlName="que" required placeholder="Question">
             </mat-form-field>

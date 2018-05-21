@@ -43,6 +43,8 @@ export class ProductDetailsComponent implements OnInit {
    question: Array<any> = [];
    productImg: Array<any> = [];
    chatData: any;
+   chatWithCustomer = true;
+   chatBtnTxt = 'chat';
    formErrors: FormQueErrors = {
       'que': '',
    };
@@ -61,7 +63,6 @@ export class ProductDetailsComponent implements OnInit {
    }
 
    ngOnInit() {
-
       this.currentUser = JSON.parse(window.localStorage.getItem('user'));
       if (this.currentUser) {
          this.uid = this.currentUser.uid;
@@ -149,10 +150,17 @@ export class ProductDetailsComponent implements OnInit {
       this.productService.getProduct(this.productId).subscribe((resp: product) => {
          this.product = resp;
          this.checkImageExistance();
-         if (this.product.status === 'wishlist' && this.product.userId === this.uid) {
-            this.isWishlisted = true;
+         // if loggedin user is product owner then show chat with customer and hide offer form
+         // else show chat with Seller and show offer form
+         if (this.product.userId === this.uid) {
+            if (this.product.status === 'wishlist') {
+               this.isWishlisted = true;
+            }
          }
-         // console.log('this.product  == ', this.product);
+         // owner of the product == this.product.userId == this.uid
+         // user who create offer == this.offer.userId == this.uid
+         // is
+         console.log('this.product  == ', this.product.userId);
       });
    }
 
@@ -298,14 +306,26 @@ export class ProductDetailsComponent implements OnInit {
       elementId.scrollIntoView({ behavior: 'smooth' });
    }
 
-   openChat(index: any) {
+   openChat(index: any, chatWith: any) {
+      // seller will be always userTwo
+      const productId1 = this.offersBy[index].productId;
+      let userOneId1 = this.offersBy[index].userOneId;
+      let userTwoId2 = this.offersBy[index].userTwoId;
+      // if user is customer
+      if (chatWith === 'chatWithSeller') {
+         userOneId1 = this.uid;
+         userTwoId2 = this.product.userId;
+      } else {
+         userOneId1 = this.offersBy[index].userTwoId;
+         userTwoId2 = this.uid;
+      }
       // tslint:disable-next-line:max-line-length
-      this.chatsCollection.ref.where('productId', '==', this.offersBy[index].productId).where('userOneId', '==', this.offersBy[index].userOneId).where('userTwoId', '==', this.offersBy[index].userTwoId).get().then((snapshot) => {
+      this.chatsCollection.ref.where('productId', '==', productId1).where('userOneId', '==', userOneId1).where('userTwoId', '==', userTwoId2).get().then((snapshot) => {
          if (snapshot.size <= 0) {
             const charRoom = {
-               productId: this.offersBy[index].productId,
-               userOneId: this.offersBy[index].userOneId,
-               userTwoId: this.offersBy[index].userTwoId,
+               productId: productId1,
+               userOneId: userOneId1,
+               userTwoId: userTwoId2,
             };
             this.messageService.createChat(charRoom).subscribe((data) => {
                this.messageService._currentChat = data;
@@ -313,9 +333,9 @@ export class ProductDetailsComponent implements OnInit {
             });
          } else {
             const chatData = {
-               productId: this.offersBy[index].productId,
-               userOneId: this.offersBy[index].userOneId,
-               userTwoId: this.offersBy[index].userTwoId,
+               productId: productId1,
+               userOneId: userOneId1,
+               userTwoId: userTwoId2,
                chatId: '',
             };
             snapshot.forEach((respDoc) => {

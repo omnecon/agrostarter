@@ -15,6 +15,7 @@ export class UserProductComponent implements OnInit {
    allWishProduct: any = [];
    allSoldProduct: any = [];
    uid: any;
+
    constructor(private router: Router, private productService: ProductService, private route: ActivatedRoute) { }
    ngOnInit() {
       const newUser: any = JSON.parse(window.localStorage.getItem('user'));
@@ -26,6 +27,7 @@ export class UserProductComponent implements OnInit {
       this.getAllDraftProduct();
       this.getAllPublishProduct();
       this.getAllSoldProduct();
+      this.getAllWishProduct();
    }
 
    // Get all draft Products
@@ -46,6 +48,13 @@ export class UserProductComponent implements OnInit {
    getAllSoldProduct() {
       this.productService.getAllSoldProduct(this.uid).subscribe((data: any) => {
          this.allSoldProduct = data;
+      });
+   }
+
+   // Get all Wishlist Products
+   getAllWishProduct() {
+      this.productService.getAllWishProduct(this.uid).subscribe((data: any) => {
+         this.allWishProduct = data;
       });
    }
 
